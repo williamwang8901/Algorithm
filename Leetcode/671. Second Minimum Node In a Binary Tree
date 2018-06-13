@@ -1,0 +1,59 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int findSecondMinimumValue(TreeNode root) {
+        return find(root, root);
+    }
+    //这道题root 已经是最小的。我们可以利用这个root的参数找second min    
+    public int find(TreeNode root, TreeNode min) {
+        if (root == null) {
+            return -1;
+        }
+        
+        if (root.val != min.val) {
+            return root.val;
+        }
+        
+        int left = find(root.left, root);
+        int right = find(root.right, root);
+        
+        if (left == -1) {
+            return right;
+        }
+        if (right == -1) {
+            return left;
+        }
+        
+        return Math.min(left, right);
+    }
+    
+    //这种方法可以处理一般的树
+    public int findSecondMin(TreeNode root) {
+        dfs(root);
+        return secondMin == null ? -1 : secondMin.val;
+    }
+    TreeNode min = null;
+    TreeNode secondMin = null;
+    public void dfs(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        if (min == null || root.val < min.val) {
+            secondMin = min;
+            min = root;
+        } else if (root.val != min.val) {
+            if (secondMin == null || root.val < secondMin.val) {
+                secondMin = root;   
+            }
+        }
+        dfs(root.left);
+        dfs(root.right);
+    }
+}
