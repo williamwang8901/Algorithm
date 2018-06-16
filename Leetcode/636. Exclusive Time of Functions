@@ -1,0 +1,29 @@
+class Solution {
+    public int[] exclusiveTime(int n, List<String> logs) {
+        if (logs == null || logs.size() == 0) {
+            return new int[0];
+        }   
+        
+        int[] result = new int[n];
+        //我们用stack 来存储log 的id
+        LinkedList<Integer> stack = new LinkedList<Integer>();
+        int preTime = 0;      //这里需要设置preTime 是因为当前的id end 之后之前没结束的那个job id 又可以继续执行了
+        for (String log : logs) {
+            String[] arr = log.split(":");
+            int id = Integer.valueOf(arr[0]);
+            int timeStamp = Integer.valueOf(arr[2]);
+            if (arr[1].equals("start")) {
+                if (!stack.isEmpty()) {
+                   result[stack.peek()] += timeStamp - preTime;      
+               } 
+                stack.push(id);
+                preTime = timeStamp;
+            } else {
+                result[stack.peek()] += timeStamp - preTime + 1;
+                preTime = timeStamp + 1;
+                stack.pop();
+            }
+        }
+        return result;
+    }
+}

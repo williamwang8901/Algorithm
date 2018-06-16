@@ -1,0 +1,88 @@
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+class Solution {
+    
+    public int minMeetingRooms(Interval[] intervals) {
+        return scanLine(intervals);
+    }
+        
+    public int priorityQueue(Interval[] intervals) {
+        if (intervals == null || intervals.length == 0) {
+            return 0;
+        }
+        
+            // Sort the intervals by start time
+        Arrays.sort(intervals, new Comparator<Interval>() {
+            public int compare(Interval a, Interval b) { return a.start - b.start; }
+        });
+        
+        
+        //按照end 排序， 最先结束的会议 先弹出queue
+        Comparator<Interval> comparator = new Comparator<Interval>(){
+            public int compare(Interval o1, Interval o2) {
+                return o1.end - o2.end;
+            }
+        };
+        PriorityQueue<Interval> pq = new PriorityQueue<Interval>(comparator);
+        
+        int result = 0;
+        
+        for (Interval interval : intervals) {
+            if (!pq.isEmpty()) {
+                if (pq.peek().end <= interval.start) {
+                    pq.poll();
+                }
+                pq.offer(interval);
+            } else {
+                pq.offer(interval);
+            }
+            result = Math.max(result, pq.size());
+        }
+        return result;
+    }
+    
+    //用扫描线    很经典
+    public int scanLine(Interval[] intervals) {
+        if (intervals == null || intervals.length == 0) {
+            return 0;
+        }
+        
+        List<int[]> list = new ArrayList<int[]>();
+        for (Interval interval : intervals) {
+            list.add(new int[]{interval.start, 1});
+            list.add(new int[]{interval.end, -1});
+        }
+        
+        Comparator<int[]> comparator = new Comparator<int[]>(){
+            public int compare(int[] a, int[] b) {
+                if (a[0] == b[0]) {
+                    return a[1] - b[1];  //如果又一个start 和end 都相等，那我们就把 end 放前面 这样可以先free 一个房间
+                }
+                return a[0] - b[0];
+            }  
+        };
+        
+        Collections.sort(list, comparator);
+        
+        int result = 0;
+        int count = 0;
+        for (int[] time : list) {
+            System.out.println(time[0]);
+            System.out.println(time[1]);
+            if (time[1] == 1) { //是start
+                count++;
+            } else {
+                count--;
+            }
+            result = Math.max(result, count);
+        }
+        return result;
+    }
+}

@@ -1,0 +1,129 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Codec {
+
+//     // Encodes a tree to a single string.
+//     public String serialize(TreeNode root) {
+//         if (root == null) {
+//             return "#";
+//         }
+        
+//         String left = serialize(root.left);
+//         String right = serialize(root.right);
+        
+//         return root.val + "," + left + ","+ right;  //preOrder
+//     }
+
+//     // Decodes your encoded data to tree.
+//     public TreeNode deserialize(String data) {
+//         String[] arr = data.split(",");
+//         return dfs(arr);
+//     }
+    
+//     int i = 0;
+//     public TreeNode preOrder(String[] arr) {
+//         if (i == arr.length) {
+//             return null;
+//         }
+//         if (arr[i].equals("#")) {
+//             return null;
+//         }
+        
+//         TreeNode root = new TreeNode(Integer.valueOf(arr[i]));
+//         i++;
+//         root.left = dfs(arr);
+//         i++;
+//         root.right = dfs(arr);
+        
+//         return root;
+//     }
+    
+    
+    /************The following is using dfs with StringBuilder and Queue ******/
+
+public class Codec {
+    LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        preOrder(root, sb);
+        System.out.println(sb);
+        return sb.toString();
+    }
+    
+    public void preOrder(TreeNode root, StringBuilder sb) {
+        if (root == null) {
+            sb.append("#");
+            sb.append(",");
+            return;
+        }
+        sb.append(root.val);
+        sb.append(",");
+        preOrder(root.left, sb);
+        preOrder(root.right, sb);
+    }
+
+    // Decodes your encoded data to tree.
+//     int i = 0;  // using dfs with global index i 
+//     public TreeNode deserialize(String data) {
+//         if (data == null || data.length() == 0) {
+//             return null;
+//         }
+//         String[] arr = data.split(",");
+//         TreeNode root = dfs(arr);
+//         System.out.println(i);
+//         return root;
+//     }
+    
+    
+//     public TreeNode dfs(String[] data) {
+//         if (i >= data.length || data[i].equals("#")) {
+//             System.out.println("return " + i);
+//             return null;
+//         }
+//         TreeNode cur = new TreeNode(Integer.valueOf(data[i]));
+//         i++
+//         cur.left = dfs(data);
+//         i++;
+//         cur.right = dfs(data);
+//         return cur;
+//     }
+    
+    //using dfs with queue
+    public TreeNode deserialize(String data) {
+        if (data == null || data.length() == 0) {
+            return null;
+        }
+        String[] arr = data.split(",");
+        LinkedList<String> queue = new LinkedList<String>();
+        for(String str : arr) {
+            queue.offer(str);
+        }
+        
+        return dfsWithQueue(queue);
+    }
+    
+    public TreeNode dfsWithQueue(LinkedList<String> queue) {
+        if (queue.isEmpty()) {
+            return null;
+        }
+        String str = queue.poll();
+        if (str.equals("#")) {
+            return null;
+        }
+        
+        TreeNode cur = new TreeNode(Integer.valueOf(str));
+        cur.left = dfsWithQueue(queue);
+        cur.right = dfsWithQueue(queue);
+        return cur;
+    }
+    
+}
+}

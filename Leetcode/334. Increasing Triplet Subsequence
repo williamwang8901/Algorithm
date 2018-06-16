@@ -1,0 +1,21 @@
+class Solution {
+    public boolean increasingTriplet(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        
+        int min = ~(1 << 31);
+        int secondMin = ~(1<<31);
+        
+        for (int num : nums) {
+            if (num <= min) { //必须要有等号 eg：1，1，1，1
+                min = num;
+            } else if (num <= secondMin) {  //必须要有等号 eg：[1,2,2,1]
+                secondMin = num;
+            } else {
+                return true; // execute here if and only if we have min, secMin, and third large
+            }
+        }
+        return false;
+    }
+}
