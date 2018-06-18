@@ -1,0 +1,151 @@
+class Solution {
+    public int findTargetSumWays(int[] nums, int S) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        // dfs(nums, S, 0, 0);
+        // return result;
+        
+        // return dfs2(nums, S, 0, 0);
+        
+//         return dp(nums, S);
+        
+        // return dpIterate(nums, S);
+        
+        // return dpIterateRollingArray(nums, S);
+        
+        return subsetSum(nums, S);
+    }
+    
+    int result = 0;
+    public void dfs(int[] nums, int S, int currentSum, int start) {
+        if (start == nums.length) {
+            if (currentSum == S) {
+                result++;
+            }
+            return;
+        }
+        dfs(nums, S, currentSum + nums[start], start + 1);
+        dfs(nums, S, currentSum - nums[start], start + 1);
+    }
+    
+    //利用返回值的
+    public int dfs2(int[] nums, int S, int currentSum, int start) {
+        if (start == nums.length) {
+            if (currentSum == S) {
+                return 1;
+            }
+            return 0;
+        }
+        int a = dfs2(nums, S, currentSum + nums[start], start + 1);
+        int b = dfs2(nums, S, currentSum - nums[start], start + 1);   
+        return a + b;
+    }
+    
+    
+    //recursive + memorize
+    public int dp(int[] nums, int S) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        HashMap[] map = new HashMap[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            map[i] = new HashMap<Integer, Integer>();
+        }
+       return recursive(nums, S, 0, map, 0); 
+    }
+    
+    public int recursive(int[] nums, int S, int curSum, HashMap<Integer, Integer>[] map, int start) {
+        if (start == nums.length) {
+            if (curSum == S) {
+                return 1;
+            }
+            return 0;
+        }
+        
+        if (map[start].containsKey(S - curSum)) {
+            return map[start].get(S - curSum);
+        }
+        
+        int a = recursive(nums, S, curSum + nums[start], map, start + 1);
+        int b = recursive(nums, S, curSum - nums[start], map, start + 1);
+        map[start].put(S - curSum, a + b);
+        return a + b;
+    }
+    
+    
+    public int dpIterate(int[] nums, int S) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        
+        sum += S;
+        if (sum % 2 != 0) {
+            return 0;
+        }
+        
+        sum /= 2;
+        
+        int[][] dp = new int[nums.length + 1][sum + 1];
+        dp[0][0] = 1;
+        for (int i = 1; i <= nums.length; i++) {
+            dp[i][0] = 1;
+            for (int j = 1; j <= sum; j++) {
+                dp[i][j] = dp[i - 1][j] + (j >= nums[i - 1] ? dp[i - 1][j - nums[i - 1]] : 0);
+            }
+        }
+        
+        return dp[nums.length][sum];
+    }
+    
+    
+    public int dpIterateRollingArray(int[] nums, int S) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        
+        sum += S;
+        if (sum % 2 != 0) {
+            return 0;
+        }
+        
+        sum /= 2;
+        
+        int[] dp = new int[sum + 1];
+        dp[0] = 1;
+        for (int i = 1; i <= nums.length; i++) {
+            for (int j = sum; j >= 1; j--) {
+                dp[j] = dp[j] + (j >= nums[i - 1] ? dp[j - nums[i - 1]] : 0);
+            }
+        }
+        
+        return dp[sum];
+    }
+    
+    
+    //下面是网友给的答案 其实和上面一样的  只是都超memory 了
+    public int subsetSum(int[] nums, int s) {
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        
+        sum += s;
+        if (sum % 2 != 0) {
+            return 0;
+        }
+        
+        sum /= 2;
+        
+        int[] dp = new int[sum + 1]; 
+        dp[0] = 1;
+        for (int n : nums)
+            for (int i = sum; i >= n; i--)
+                dp[i] += dp[i - n]; 
+        return dp[sum];
+    }         
+}

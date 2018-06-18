@@ -1,0 +1,40 @@
+public class Solution {
+    public int minMutation(String start, String end, String[] bank) {
+        if (start == null || end == null || bank == null || bank.length == 0) {
+            return -1;
+        }
+        LinkedList<String> queue = new LinkedList<String>();
+        HashSet<String> set = new HashSet<String>();
+        for (String temp : bank) {
+            set.add(temp);
+        }
+        queue.offer(start);
+        char[] replace = {'A','C','G','T'};
+        int level = 0;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                char[] cur = queue.poll().toCharArray();
+                for (int j = 0; j < cur.length; j++) {
+                    char before = cur[j];
+                    for (char c : replace) {
+                        if (c != cur[j]) {
+                            cur[j] = c;
+                        }
+                        String temp = new String(cur);
+                        if (set.contains(temp)) {
+                            if (temp.equals(end)) {
+                                return level + 1;
+                            }
+                            queue.offer(temp);
+                            set.remove(temp);   //这里我们只需要把访问过的 从set remove掉就可以，不需要再建一个visited set
+                        }
+                    }
+                    cur[j] = before;
+                }
+            }
+            level++;
+        }
+        return -1;
+    }
+}

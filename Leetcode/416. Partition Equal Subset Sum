@@ -1,0 +1,72 @@
+class Solution {
+    public boolean canPartition(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        if (sum % 2 != 0) {
+            return false;
+        }
+        
+        // Arrays.sort(nums);
+        // return recursive(nums, 0, 0, sum / 2);
+        
+        return dpRollingArray(nums, sum / 2);
+    }
+
+    public boolean recursive(int[] nums, int start, int curSum, int target) {
+        if (start == nums.length) {
+            return false;
+        }
+        
+        if (curSum == target) {
+            return true;
+        }
+        for (int i = start; i < nums.length; i++) {
+            if (curSum + nums[i]> target) {
+                continue;
+            }
+            if (recursive(nums, i + 1, curSum + nums[i], target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    //利用背包问题 算前i 个数 是否有可以加起来等于 target sum 的
+    public boolean dp(int[] nums, int target) {
+        boolean[][] dp = new boolean[nums.length + 1][target + 1];
+        dp[0][0] = true;
+        for (int i = 1; i <= nums.length; i++) {
+            dp[i][0] = true;
+            for (int j = 1; j <= target; j++) {            //这里是 i -1 因为当前用过的数字 就不能在用了
+                dp[i][j] = dp[i - 1][j] || (j >= nums[i - 1] ? dp[i - 1][j - nums[i - 1]] : false);
+            }
+        }
+        return dp[nums.length][target];
+    }
+    
+    //利用滚动数组 就更方便了
+    public boolean dpRollingArray(int[] nums, int target) {
+        boolean[] dp = new boolean[target + 1];
+        dp[0] = true;
+        for (int i = 1; i <= nums.length; i++) {
+            for (int j = target; j >= 1; j--) {
+                //这里是 i -1 因为
+                /*
+                Because dp[i] = dp[i] || dp[i-num] uses smaller index value dp[i-num].
+                When the current iteration begins, the values in dp[] are the result of previous iteration.
+                Current iteration's result should only depend on the values of previous iteration.
+                If you iterate from i = 0, then dp[i-num] will be overwritten before you use it, which is wrong.
+                You can avoid this problem by iterating from i=sum
+                */
+                dp[j] = dp[j] || (j >= nums[i - 1] ? dp[j - nums[i - 1]] : false);
+            }
+        }
+        return dp[target];
+    }
+}
