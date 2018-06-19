@@ -1,0 +1,55 @@
+class Solution {
+    public boolean isHappy(int n) {
+        // return usingSet(n);
+        return floydCycledetection(n);
+    }
+    
+    
+    
+    public boolean floydCycledetection(int n) {
+        int fast = n;
+        int slow = n;
+        
+        do{
+            fast = getDigitSum(fast);
+            fast = getDigitSum(fast);
+            slow = getDigitSum(slow);
+            System.out.println(fast);
+            System.out.println(slow);
+        } while (fast != slow);
+        return fast == 1? true :false;
+    }
+        
+        
+        
+    
+    public boolean usingSet(int n) {
+        HashSet<Integer> set = new HashSet<Integer>();
+        
+        
+        while (!set.contains(n)) {
+            set.add(n);
+            int sum = getDigitSum(n);
+            System.out.println(sum);
+            if (sum == 1) {
+                return true;
+            }
+            
+            if (set.contains(sum)) {
+                return false;
+            }
+            n = sum;
+        }
+        return n == 1;
+    }
+    
+    public int getDigitSum(int n) {
+        int sum = 0;
+        while (n != 0) {
+            int reminder = n % 10;
+            sum += reminder * reminder;
+            n /= 10;
+        }
+        return sum;
+    }
+}
