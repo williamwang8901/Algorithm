@@ -1,0 +1,70 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> findLeaves(TreeNode root) {
+         // return method1(root);
+         return method2(root);
+    }
+    
+    //using tree height
+    public List<List<Integer>> method1(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        dfs(root, result);
+        return result;
+    }
+    
+    public int dfs(TreeNode root, List<List<Integer>> result) {
+        if (root == null) {
+            return -1;
+        }
+        
+        int left = dfs(root.left, result);
+        int right = dfs(root.right, result);
+        int curHeight = Math.max(left, right) + 1;
+        if (curHeight >= result.size()) {
+            result.add(new ArrayList<Integer>());
+        }
+        result.get(curHeight).add(root.val);
+        return  curHeight;
+    }
+    
+    public List<List<Integer>> method2(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        
+        List<Integer> ret = new ArrayList<Integer>();
+        
+        while (root != null) {
+            root = recursive(root, ret);
+            result.add(new ArrayList<Integer>(ret));
+            ret.clear();
+        }
+        
+        return result;
+    }
+    
+    public TreeNode recursive(TreeNode root, List<Integer> ret) {
+        if (root == null) {
+            return null;
+        }
+        if (root.left == null && root.right == null) {
+            ret.add(root.val);
+            return null;
+        }
+        root.left = recursive(root.left, ret);
+        root.right = recursive(root.right, ret);
+        return root;
+    }
+}

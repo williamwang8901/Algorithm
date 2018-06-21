@@ -1,0 +1,41 @@
+class Solution {
+    public int shortestWordDistance(String[] words, String word1, String word2) {
+        if (words == null || words.length == 0) {
+            return 0;
+        }
+        
+        int result = ~(1 << 31);
+        int pre = -1;
+        
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(word1) || words[i].equals(word2)) {
+                if (pre != -1 && ((word1.equals(word2)) || !words[i].equals(words[pre]))) {
+                    result = Math.min(result, i - pre);
+                } 
+                pre = i;
+                
+            }
+        }
+        return result;
+        
+        
+   
+        
+        
+        
+        
+    
+        
+//         for (int i = 0; i < words.length; i++) {
+//             String cur = words[i];
+//             if (cur.equals(word1) || cur.equals(word2)) {
+//                 if (pre != -1 && (word1.equals(word2) || !cur.equals(words[pre]))) {
+//                     result = Math.min(result, i - pre);
+//                 }
+//                 pre = i;
+//             }
+            
+//         }
+//         return result;
+    }
+}

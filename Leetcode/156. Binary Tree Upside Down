@@ -1,0 +1,30 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    ////The primary structure of the code is very similar to the Reverse Linked List problem, so it should not be so hard to understand.
+    public TreeNode upsideDownBinaryTree(TreeNode root) {
+        if (root == null) {
+            return root;
+        }
+        TreeNode pre = null;
+        TreeNode gift = null;
+        while (root != null) {
+            TreeNode left = root.left;
+            root.left = gift;
+            gift = root.right;
+            root.right = pre;
+            pre = root;
+            root = left;
+        }
+        return pre;
+    }
+    
+    
+}
