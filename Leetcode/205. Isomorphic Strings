@@ -1,0 +1,68 @@
+class Solution {
+    public boolean isIsomorphic1(String s, String t) {
+        if (s == null || t == null) {
+            return false;
+        }
+        
+        if (s.length() != t.length()) {
+            return false;
+        }
+        
+        HashMap<Character, Character> mapS = new HashMap<Character, Character>();
+        HashMap<Character, Character> mapT = new HashMap<Character, Character>();
+        
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            char d = t.charAt(i);
+            
+            if (mapS.containsKey(c)) {
+                if (mapS.get(c) != d) {
+                    return false;
+                }
+            }
+            
+            if (mapT.containsKey(d)) {
+                if (mapT.get(d) != c) {
+                    return false;
+                }
+            }
+            
+            mapS.put(c, d);
+            mapT.put(d, c);
+        }
+        return true;
+        
+    }
+    
+    //method2 using last seening idex
+    /*The main idea is to store the last seen positions of current (i-th) characters in both strings. If previously stored positions are different then we know that the fact they're occuring in the current i-th position simultaneously is a mistake. We could use a map for storing but as we deal with chars which are basically ints and can be used as indices we can do the whole thing with an array.*/
+    public boolean isIsomorphic(String s, String t) {
+        if (s == null || t == null) {
+            return false;
+        }
+        
+        if (s.length() != t.length()) {
+            return false;
+        }
+        
+        int[] mapS = new int[256];
+        int[] mapT = new int[256];
+        
+        for (int i = 0; i < s.length(); i++) {
+            int c = s.charAt(i);
+            int d = t.charAt(i);
+            if (mapS[c] != mapT[d]) {
+                return false;
+            }
+            
+            mapS[c] = i + 1;
+            mapT[d] = i + 1;
+            
+        }
+        return true;
+        
+    }
+    
+    
+    
+}

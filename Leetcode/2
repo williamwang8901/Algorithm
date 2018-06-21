@@ -1,0 +1,46 @@
+class Solution {
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return false;
+        }
+        
+        int sum = 0;
+        
+        for (int num : nums) {
+            sum += num;
+        }
+        
+        if (sum % k != 0) {
+            return false;
+        }
+        
+        boolean[] visited = new boolean[nums.length];
+        System.out.println("sum / k " + sum / k);
+        return dfs(nums, 0, k, sum / k, 0, visited);
+    }
+    
+    public boolean dfs(int[] nums, int start, int k, int target, int curSum, boolean[] visited) {
+        if (k == 0) {
+            return true;
+        }
+        
+        if (curSum == target) {
+            return dfs(nums, 0, --k, target, 0, visited);
+        }
+        
+        for (int i = start; i < nums.length; i++) {
+            if (visited[i]) {
+                continue;
+            }
+            if (curSum + nums[i] <= target) {
+                visited[i] = true;
+                if (dfs(nums, i + 1, k, target, curSum + nums[i],  visited)) {
+                    return true;
+                }
+                visited[i] = false;
+            }
+            
+        }
+        return false;
+    }
+}
