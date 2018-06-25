@@ -1,0 +1,77 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    double diff = Double.MAX_VALUE;
+    int result = 0;
+    public int closestValue(TreeNode root, double target) {
+        // inOrder(root, target);
+        // return result;
+        
+        // return binarySearch(root, target);
+        
+        return recursiveBinarySearch(root, target).val;
+    }
+    
+    //inOrder recursive
+    public void inOrder(TreeNode root, double target) {
+        if (root == null) {
+            return;
+        }
+        
+        inOrder(root.left, target);
+       
+        if (Math.abs(target - root.val) < diff) {
+            result = root.val;
+            diff = Math.abs(target - root.val);
+        }
+        
+        inOrder(root.right, target);
+    }
+    
+    public int iterate(TreeNode root, double target) {
+        return 0;
+    }
+    
+    public int binarySearch(TreeNode root, double target) {
+        TreeNode result = root;
+        
+        while (root != null) {
+            if (Math.abs(root.val - target) < Math.abs(result.val - target)) {
+                result = root;
+            }
+            
+            if (target > root.val) {
+                root = root.right;
+            } else {
+                root = root.left;
+            }
+        }
+        return result.val;
+    }
+    
+    public TreeNode recursiveBinarySearch(TreeNode root, double target) {
+        if (root == null) {
+            return root;
+        }
+        
+        TreeNode temp = target > root.val ? recursiveBinarySearch(root.right, target) : recursiveBinarySearch(root.left, target);
+        
+        if (temp == null) {
+            return root;
+        }
+        
+        if (Math.abs(root.val - target) > Math.abs(temp.val - target)) {
+                root = temp;
+        }
+        return root;
+    }
+    
+       
+}

@@ -1,0 +1,40 @@
+class Solution {
+    public int evalRPN(String[] tokens) {
+        if (tokens == null || tokens.length == 0) {
+            return 0;
+        }
+        
+        LinkedList<Integer> stack = new LinkedList<Integer>();
+        HashSet<String> set = new HashSet<String>();
+        
+        set.add("+");
+        set.add("-");
+        set.add("*");
+        set.add("/");
+        
+        for (String token : tokens) {
+            if (!set.contains(token)) {
+                stack.push(Integer.valueOf(token));
+            } else {
+                int second = stack.pop();
+                int first = stack.pop();
+                stack.push(evalue(first, second, token));
+            }
+        }
+        return stack.pop();
+    }
+    
+    
+    public int evalue(int first, int second, String Operator) {
+        switch (Operator) {
+            case "-":
+                return first - second;
+            case "+":
+                return first + second;
+            case "*":
+                return first * second;
+            default:
+                return first / second;
+        }
+    }
+}

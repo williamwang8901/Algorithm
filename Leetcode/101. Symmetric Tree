@@ -1,0 +1,51 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public boolean isSymmetric(TreeNode root) {
+        
+        // return dfs(root, root);
+        return bfs(root);
+    }
+    
+    public boolean dfs(TreeNode root1, TreeNode root2) {
+        if (root1 == null && root2 == null) {
+            return true;
+        }
+        
+        if (root1 == null || root2 == null || root1.val != root2.val) {
+            return false;
+        }
+        
+        return dfs(root1.left, root2.right) && dfs(root1.right, root2.left);
+    }
+    
+    public boolean bfs(TreeNode root) {
+        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        
+        queue.offer(root);
+        queue.offer(root);
+        
+        while (!queue.isEmpty()) {
+            TreeNode first = queue.poll();
+            TreeNode second = queue.poll();
+            if (first == null && second == null) {
+                continue;
+            }
+            if (first == null || second == null || first.val != second.val) {
+                return false;
+            }
+            queue.offer(first.left);
+            queue.offer(second.right);
+            queue.offer(first.right);
+            queue.offer(second.left);
+        }
+        return true;
+    }
+}

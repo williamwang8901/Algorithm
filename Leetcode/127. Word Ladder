@@ -1,0 +1,62 @@
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        return bfs(beginWord, endWord, wordList);
+    }
+    
+    
+    //单向bfs
+    public int bfs(String beginWord, String endWord, List<String> wordList) {    
+        
+        if (beginWord == null || endWord == null || wordList == null || wordList.size() == 0) {
+            return 0;
+        }
+        
+        int result = 1;  //因为这个路径从他开始 就算1 
+        
+        HashSet<String> set = new HashSet<String>();
+        // HashSet<String> visited = new HashSet<String>();   //其实这个题目不需要加额外的set 检查是否visited 过
+        
+        for(String word : wordList) {
+            set.add(word);
+        }
+        
+        LinkedList<String> queue = new LinkedList<String>();
+        queue.offer(beginWord);
+        
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                char[] cur = queue.poll().toCharArray();
+                for (int j = 0; j < cur.length; j++) {
+                    char temp = cur[j];
+                    for (int k = 0; k < 26; k++) {
+                        char newChar = (char)('a' + k);                        
+                        if (temp == newChar) {
+                            continue;
+                        }
+                        cur[j] = newChar;
+                        String sb = new String(cur);
+                        // System.out.println(sb);
+                        if (set.contains(sb)) {
+                            
+                            if (sb.equals(endWord)) {
+                                return result + 1;
+                            }
+                        
+                            // if (!visited.contains(sb)) {
+                            //     System.out.println(sb);
+                            //     queue.offer(sb);
+                            // }
+                            // visited.add(sb);
+                            queue.offer(sb);
+                            set.remove(sb);
+                        }
+                    }
+                    cur[j] = temp;  //要注意这里要还原，不然就出错了
+                }
+            }
+            result++;
+        }
+        return 0;
+    }
+}

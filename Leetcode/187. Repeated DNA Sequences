@@ -1,0 +1,44 @@
+class Solution {
+    //https://segmentfault.com/a/1190000003922976
+    public List<String> findRepeatedDnaSequences(String s) {
+        List<String> result = new ArrayList<String>();
+        if (s == null || s.length() == 0) {
+            return result;
+        }
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for (int i = 10; i <= s.length(); i++) {
+            String subString = s.substring(i - 10, i);
+            int code = enCode(subString);
+            if (!map.containsKey(code)) {
+                map.put(code, 0);
+            }
+                
+            map.put(code, map.get(code) + 1);
+            
+            if (map.get(code) == 2) {
+                result.add(subString);
+            }
+        }
+        
+        return result;
+    }
+    
+    public int enCode(String subString) {
+        if (subString.length() == 0) {
+            return 0;
+        }
+        int code = 0;
+        for (int i= 0; i < subString.length(); i++) {
+            char cur = subString.charAt(i);
+            code <<= 2;
+            switch (cur) {
+                case 'A': code |= 0; break;
+                case 'C': code |= 1; break;
+                case 'T': code |= 2; break;
+                case 'G': code |= 3; break;
+            }
+        }
+        return code;
+    }
+    
+}

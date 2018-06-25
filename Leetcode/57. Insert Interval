@@ -1,0 +1,35 @@
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+class Solution {
+    // the question is how to get the proper insertion position
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        List<Interval> result = new ArrayList<Interval>();
+        if (intervals == null) {
+            return result;
+        }
+        int pos = 0;
+        while (pos < intervals.size() && newInterval.start > intervals.get(pos).end) {
+            result.add(intervals.get(pos));
+            pos++;
+        }
+        
+	                                   //因为之前我们的start 取的是min 所以 当前新的 newinterval.start必然是小于当前的start 所以我们只需要比较end 是否大于 start
+        while (pos < intervals.size() &&  newInterval.end >= intervals.get(pos).start) {
+            newInterval.start = Math.min(newInterval.start, intervals.get(pos).start);
+            newInterval.end = Math.max(newInterval.end, intervals.get(pos).end);
+            pos++;
+        }
+        result.add(newInterval);
+        while (pos < intervals.size()) {
+            result.add(intervals.get(pos++));
+        }
+        return result;
+    }
+}

@@ -1,0 +1,46 @@
+class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return new int[] {-1, -1};
+        }
+        
+        int left = 0;
+        int right = nums.length;
+        
+        int[] result = new int[]{-1, -1};
+        
+        //find the start index
+        while (left < right) {
+            int mid = left + ((right - left) >> 1);
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        
+        if (left == nums.length || nums[left] != target) { // target is not in this array
+            return result;
+        }
+        
+        result[0] = left;
+            
+        left = 0;
+        right = nums.length;
+    
+        while (left < right) {
+            int mid = left + ((right - left) >> 1);
+            if (nums[mid] <= target) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        
+        if (nums[left - 1] == target) {
+            result[1] = left - 1;
+        }
+        return result;
+        
+    }
+}

@@ -1,0 +1,42 @@
+class Solution {
+    public String minWindow(String s, String t) {
+        if (s == null || s.length() == 0 || t == null || t.length() == 0) {
+            return "";
+        }
+        
+        
+        int[] table = new int[256];
+        
+        for (int i = 0; i < t.length(); i++) {
+            table[t.charAt(i)]++;
+        }
+        
+        int count = t.length();
+        
+        int i = 0;
+        int j = 0;
+        
+        int length = ~(1 << 31);
+        String result = "";
+        while (i < s.length()) {
+            char c= s.charAt(i);
+            if (table[c] > 0) {
+                count--;
+            }
+            table[c]--;
+            i++;
+            
+            while (count == 0) {
+
+                if (i - j < length) {
+                    length = i - j;
+                    result = s.substring(j, i);
+                }
+                if (table[s.charAt(j)] == 0) {
+                    count++;
+                }
+                table[s.charAt(j++)]++;
+            }
+        }
+        return result;
+    }

@@ -6,13 +6,12 @@ class Solution {
         }
         List<Integer> ret = new ArrayList<Integer>();
         boolean[] visited = new boolean[nums.length];
-        dfs(nums, 0 , result, ret, visited);
+        dfs(nums, visited, ret, result);
         return result;
     }
     
-    public void dfs(int[] nums, int start, List<List<Integer>> result, List<Integer> ret, boolean[] visited) {
+    public void dfs(int[] nums, boolean[] visited, List<Integer> ret, List<List<Integer>> result) {
         if (ret.size() == nums.length) {
-            System.out.println(ret);
             result.add(new ArrayList<Integer>(ret));
             return;
         }
@@ -21,11 +20,11 @@ class Solution {
             if (visited[i]) {
                 continue;
             }
-            ret.add(nums[i]);
             visited[i] = true;
-            dfs(nums, start, result, ret, visited);
-            visited[i] = false;
+            ret.add(nums[i]);
+            dfs(nums, visited, ret, result);
             ret.remove(ret.size() - 1);
+            visited[i] = false;
         }
     }
 }
