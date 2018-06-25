@@ -1,0 +1,88 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        return dfs(root);
+        // return bfs(root);   
+    }
+    
+    public List<List<Integer>> twoStack(TreeNode root) {
+        
+    }
+    
+    //using queue and insert function
+    
+    public List<List<Integer>> dfs(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        List<Integer> ret = new ArrayList<Integer>();
+        
+        preOrder(root, result, ret, 0);
+        
+        return result;
+    }
+    
+    
+    public void preOrder(TreeNode root, List<List<Integer>> result, List<Integer> ret, int level) {
+        if (root == null) {
+            return;
+        }
+        
+        if (result.size() <= level) {
+            result.add(new ArrayList<Integer>());
+        }
+        
+        if (level % 2 == 0) {
+            result.get(level).add(root.val);
+        } else {
+            result.get(level).add(0, root.val);
+        }
+        preOrder(root.left, result, ret, level + 1);
+        preOrder(root.right, result, ret, level + 1);
+    }
+    
+    //bfs  using one queue and reverse function
+    public List<List<Integer>> bfs(TreeNode root) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        
+        if (root == null) {
+            return result;
+        }
+        
+        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        List<Integer> ret = new ArrayList<Integer>();
+        queue.offer(root);
+        
+        boolean flag = true;
+        
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            ret.clear();
+            for (int i = 0; i < size; i++) {
+                TreeNode cur = queue.poll();
+                ret.add(cur.val);
+                if (cur.left != null) {
+                    queue.offer(cur.left);
+                }
+                
+                if (cur.right != null) {
+                    queue.offer(cur.right);
+                }
+            }
+            if (flag) {
+                result.add(new ArrayList<Integer>(ret));
+            } else {
+                Collections.reverse(ret);
+                result.add(new ArrayList<Integer>(ret));
+            }
+            flag = !flag;
+        }
+        return result;
+    }
+}

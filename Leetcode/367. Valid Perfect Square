@@ -1,0 +1,29 @@
+class Solution {
+    public boolean isPerfectSquare(int num) {
+        if (num <= 1) {
+            return true;
+        }
+        int left = 0;
+        int right = num / 2;
+        
+        while (left <= right) {
+            long  mid = left + ((right - left) >> 1);  //这里一定要先转换成long 不然下面 mid*mid会造成 整数溢出
+            
+            long sqr = mid * mid;
+            
+            if (sqr == num) {
+                return true;
+            } 
+            
+            if (sqr < num) {
+                left = (int)mid + 1;
+            } else {
+                right = (int)mid - 1;
+            }
+        }
+        return false;
+    }
+}
+
+
+ 

@@ -1,0 +1,35 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public List<Integer> largestValues(TreeNode root) {
+        List<Integer> result = new ArrayList<Integer>();
+        if (root == null) {
+            return result;
+        }
+           
+        dfs(root, 0, result);
+        return result;
+    }
+        
+    public void dfs(TreeNode root, int depth, List<Integer> result) {
+        if (root == null) {
+            return;
+        }
+        if (result.size() <= depth) {
+            result.add(root.val);
+        } else {
+        int max = Math.max(result.get(depth), root.val);
+            
+        result.set(depth, max);
+        }
+        dfs(root.left, depth + 1, result);
+        dfs(root.right, depth + 1, result);
+    }
+}

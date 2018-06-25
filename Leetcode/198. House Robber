@@ -1,0 +1,25 @@
+class Solution {
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        // int lastSteal = 0;
+        // int lastNSteal = 0;
+        
+        int Steal = 0;
+        int NSteal = 0;
+        for (int i = 0; i < nums.length; i++) {
+                int preMax = Math.max(Steal, NSteal);
+                Steal = NSteal + nums[i];
+                NSteal = preMax;
+            
+                
+            
+                // lastNSteal = curNSteal;
+                // lastSteal = curSteal;
+        }
+        
+        return Math.max(Steal, NSteal);
+    }
+}
