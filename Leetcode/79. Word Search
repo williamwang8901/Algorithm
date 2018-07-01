@@ -1,0 +1,42 @@
+class Solution {
+    public boolean exist(char[][] board, String word) {
+        if (board == null || board.length == 0 || word == null || word.length() == 0) {
+            return false;
+        }
+        int m = board.length;
+        int n = board[0].length;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == word.charAt(0)) {
+                    boolean[][] visited = new boolean[m][n];
+                    if (dfs(board, i, j, word, 0, visited)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    int[][] dir = new int[][] {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
+    public boolean dfs(char[][] board, int i, int j, String word, int start, boolean[][] visited) {
+        if (start == word.length() - 1) {
+            return true;
+        }
+        
+        visited[i][j] = true;
+        for (int k = 0; k < 4; k++) {
+            int next_x = i + dir[k][0];
+            int next_y = j + dir[k][1];
+            
+            if (next_x >= 0 && next_x < board.length && next_y >= 0 && 
+                next_y < board[0].length && !visited[next_x][next_y] && board[next_x][next_y] == word.charAt(start + 1)) {
+                if (dfs(board, next_x, next_y, word, start + 1, visited)) {
+                    return true;
+                }
+            }
+        }
+        visited[i][j] = false; //这里一定要记得 复原
+        return false;
+    }
+}

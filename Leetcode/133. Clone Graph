@@ -1,0 +1,100 @@
+/**
+ * Definition for undirected graph.
+ * class UndirectedGraphNode {
+ *     int label;
+ *     List<UndirectedGraphNode> neighbors;
+ *     UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
+ * };
+ */
+
+ //这道题目，我们create hashmap《UndirectedGraphNode， UndirectedGraphNode》 反而不是create 《int，UndirectedGraphNode》 这也难怪可以处理 two nodes with same label
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        HashMap<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
+        if (node == null) {
+            return node;
+        }
+        
+        UndirectedGraphNode newNode = new UndirectedGraphNode(node.label);
+        map.put(node, newNode);
+        LinkedList<UndirectedGraphNode> queue = new LinkedList<UndirectedGraphNode>();
+        
+        queue.offer(node);
+        
+        while (!queue.isEmpty()) {
+            UndirectedGraphNode cur = queue.poll();
+            for (UndirectedGraphNode next : cur.neighbors) {
+                if (!map.containsKey(next)) {
+                    UndirectedGraphNode copy = new UndirectedGraphNode(next.label);
+                    map.put(next, copy);
+                    queue.offer(next);
+                }
+                map.get(cur).neighbors.add(map.get(next));
+            }
+        }
+        
+        return newNode;
+    }
+
+
+
+    //dfs
+
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        HashMap<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
+        if (node == null) {
+            return node;
+        }
+        return dfs(node, map);
+    }
+    
+    //just return copy node
+     public UndirectedGraphNode dfs(UndirectedGraphNode node, HashMap<UndirectedGraphNode,UndirectedGraphNode> map) {
+        if (map.containsKey(node)) {
+            return map.get(node);
+        }
+        UndirectedGraphNode copy = new UndirectedGraphNode(node.label);
+        map.put(node, copy);
+        for (UndirectedGraphNode next : node.neighbors) {
+            map.get(node).neighbors.add(dfs(next, map));
+        }
+        return copy;
+    } 
+}
+
+/*Share my solution, first clone the node, second add cloned copy to the neighbors. I really think the one-pass by recursively calling is better. It works link memoization search, recursively calling clone function to get a cloned copy of node when needed. Thanks for your great solution.
+*/
+
+
+
+public class Solution {
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if (node == null) {
+            return null;
+        }
+        HashMap<UndirectedGraphNode, UndirectedGraphNode> map = new HashMap<UndirectedGraphNode, UndirectedGraphNode>();
+        dfs(node, map);
+        Set<UndirectedGraphNode> visited = new HashSet<UndirectedGraphNode>();
+        helper(node, map, visited);
+        return map.get(node);
+    }
+    private void dfs(UndirectedGraphNode node, HashMap<UndirectedGraphNode, UndirectedGraphNode> map) {
+        map.put(node, new UndirectedGraphNode(node.label));
+        for (UndirectedGraphNode item : node.neighbors) {
+            if (!map.containsKey(item)) {
+                dfs(item, map);
+            }
+        }
+    } 
+    private void helper(UndirectedGraphNode node, HashMap<UndirectedGraphNode, UndirectedGraphNode> map, Set<UndirectedGraphNode> visited) {
+        visited.add(node);
+        for (UndirectedGraphNode item : node.neighbors) {
+            map.get(node).neighbors.add(map.get(item));
+        }
+        for (UndirectedGraphNode item : node.neighbors) {
+            if (!visited.contains(item)) {
+                helper(item, map, visited);
+            }
+        }
+    }
+}

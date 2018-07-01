@@ -1,0 +1,84 @@
+class WordDictionary {
+    
+    class TrieNode {
+        public TrieNode[] arr;
+        boolean isWord;
+        public TrieNode() {
+            arr = new TrieNode[26];
+            isWord = false;
+        }
+    }
+    TrieNode root;
+    /** Initialize your data structure here. */
+    public WordDictionary() {
+        root = new TrieNode();
+        
+    }
+    
+    /** Adds a word into the data structure. */
+    public void addWord(String word) {
+        if (word == null || word.length() == 0) {
+            return;
+        }
+        TrieNode cur = root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            int position = c - 'a';
+            if (cur.arr[position] == null) {
+                cur.arr[position] = new TrieNode();
+            }
+            cur = cur.arr[position];
+        }
+        cur.isWord = true;
+    }
+    
+    /** Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter. */
+    public boolean search(String word) {
+        if (word == null || word.length() == 0) {
+            return false;
+        }
+        TrieNode cur = root;
+        return dfs(word, 0, cur);
+    }
+    
+    
+    public boolean dfs(String word, int pos, TrieNode root) {
+        if (pos == word.length() && root.isWord) {
+            return true;
+        }
+        if (pos == word.length()) {
+            return false;       
+        }
+        
+        char c = word.charAt(pos);       
+        if (c == '.') {
+            for (int i = 0; i < 26; i++) {
+                if (root.arr[i] == null) {
+                    continue;
+                }
+                if (dfs(word, pos + 1, root.arr[i])) {  // 这里不能用 root = root.arr[position] 然后传给dfs 因为引用传给function后 递归里面会改变root 的reference 之后 递归回来 root.arr 就不是原来的root 了
+                    return true;
+                }
+           
+            }
+        } else {
+            
+            int position = c  - 'a';
+            if (root.arr[position] == null) {
+                return false;
+            }
+            root = root.arr[position];
+            return dfs(word, pos + 1, root);
+            
+        }
+        return false;
+    }
+}
+
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * boolean param_2 = obj.search(word);
+ */

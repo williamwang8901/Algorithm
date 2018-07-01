@@ -27,6 +27,45 @@ class Solution {
     }
 }
 
+
+//这种做法是错误的， 因为-n 会一直是 int 的最小值，每次递归pow x 都被 1/x 两次 最后结果就错了
+public class Solution {
+    public double pow(double x, int n) {
+        if(n == 0)
+            return 1;
+        if(n<0){
+            n = -n;
+            x = 1/x;
+        }
+        return (n%2 == 0) ? pow(x*x, n/2) : x*pow(x*x, n/2);
+    }
+}
+
+//最好用下面这种方法 转换成long 就好了
+
+class Solution {
+    public double myPow(double x, int n) {
+        return recursive(x, n);
+    }
+    
+    public double recursive(double x, long n) {
+        if (n == 0) {
+            return 1;
+        }
+        if (n == 1) {
+            return x;
+        }
+        
+        if (n < 0) {
+            x = 1 / x;
+            n = -n;
+        }
+        
+        return n % 2 == 0? recursive(x * x, n / 2) : x * recursive(x * x, n / 2);
+    }
+}
+
+
 class Solution {
     public double myPow(double x, int n) {
         
