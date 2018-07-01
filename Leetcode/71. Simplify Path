@@ -1,0 +1,85 @@
+class Solution {
+    /*
+    https://www.jianshu.com/p/66fb88eeb6ff
+    "a-b" 分割后的长度为：2,分割后的结果为： "a" "b"
+"a-b-" 分割后的长度为：2,分割后的结果为： "a" "b"
+"-a-b" 分割后的长度为：3,分割后的结果为： "" "a" "b"
+"-a-b-" 分割后的长度为：3,分割后的结果为： "" "a" "b"
+"a" 分割后的长度为：1,分割后的结果为： "a"
+"-" 分割后的长度为：0,分割后的结果为：
+"--" 分割后的长度为：0,分割后的结果为：
+"" 分割后的长度为：1,分割后的结果为： ""
+由此可以得出来：
+当字符串只包含分隔符时，返回数组没有元素；
+当字符串不包含分隔符时，返回数组只包含一个元素（该字符串本身）；
+字符串最尾部出现的分隔符可以看成不存在，不影响字符串的分隔；
+字符串最前端出现的分隔符将分隔出一个空字符串以及剩下的部分的正常分隔；
+*/
+    
+    
+    /*一些基础知识要加强 比如：
+    1、如果用“.”作为分隔的话,必须是如下写法,String.split("\\."),这样才能正确的分隔开,不能用String.split(".");
+2、如果用“|”作为分隔的话,必须是如下写法,String.split("\|"),这样才能正确的分隔开,不能用String.split("|");
+“.”和“|”都是转义字符,必须得加"\";
+显然, + * 不是有效的模式匹配规则表达式,用"\\*" "\\+"转义后即可得到正确的结果。
+"|" 分隔串时虽然能够执行,但是却不是预期的目的,"\|"转义后即可得到正确的结果。
+还有如果想在串中使用""字符,则也需要转义.首先要表达"aaaa\bbbb"这个串就应该用"aaaa\\bbbb",如果要分隔就应该这样才能得到正确结果,
+String[] aa = "aaa\\bbb\\bccc".split("\\\\");
+    */
+    
+    /*
+    数据结构的复习  linkedlist 很有用 可以当作stack 也可以当作 queue 也可以同时用作dequeue
+    
+    https://blog.csdn.net/top_code/article/details/8650729
+    
+    LinkedList<String> queue = new LinkedList<String>();
+    
+    offer()  = add last
+    poll()  = remove first
+    
+    peek() = peek first
+    
+    push() =  add first
+    
+    pop() = remove first
+    
+    pollLast() = remove last
+    
+    peekLast()  = peek last
+    */
+    public String simplifyPath(String path) {
+        if (path == null || path.length() == 0) {
+            return path;
+        }
+        
+        LinkedList<String> stack = new LinkedList<String>();
+        
+        String[] arr = path.split("/");
+        System.out.println(arr.length);
+        for (String str : arr) {
+            System.out.println(str.length());
+            System.out.println(str);
+            if (str.length() == 0 || str.equals(".")) {
+                continue;
+            }
+            
+            if (str.equals("..")) {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+            } else {
+                stack.push(str);
+            }            
+        }
+        
+        if (stack.isEmpty()) {
+            return "/";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        while (!stack.isEmpty()) {
+            sb.append("/").append(stack.pollLast());
+        }
+        return sb.toString();
+    }
+}

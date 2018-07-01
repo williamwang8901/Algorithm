@@ -1,0 +1,45 @@
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        if (s == null || s.length() == 0 || wordDict == null || wordDict.size() == 0) {
+            return false;
+        }
+        
+        HashSet<String> set = new HashSet<String>();
+        for(String word : wordDict) {
+            set.add(word);
+        }
+        // return dfs(s, 0, set);
+        return dp(s, set);
+    }
+    
+    public boolean dfs(String s, int start, Set<String> set) {
+        if (start == s.length()) {
+            return true;
+        }
+        
+        for (int i = start; i < s.length(); i++) {
+            String word = s.substring(start, i + 1);
+            if (set.contains(word)) {
+                if (dfs(s, i + 1, set)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+    public boolean dp(String s,  Set<String> set) {
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[0] = true;
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 0; j < i; j++) {
+                String word = s.substring(j, i);
+                if (dp[j] && set.contains(word)) {
+                    dp[i] = true;
+                }
+            }
+        }
+        return dp[s.length()];
+    }
+}
