@@ -1,0 +1,52 @@
+class Solution {
+    public int maximumSwap(int num) {
+        return bruteForce(num);
+        
+    }
+    
+    //bruteforce 尝试所有情况
+    /*
+    置换该数字中的任意两位，让我们返回置换后的最大值*/
+    public int bruteForce(int num) {
+        char[] str = String.valueOf(num).toCharArray();
+        int result = 0;
+        for (int i = 0; i < str.length; i++) {
+            for (int j = i + 1; j < str.length; j++) {
+                if (str[j] > str[i]) {. //只有大于的时候才会置换
+                    swap(str, i, j);
+                    result = Math.max(result, Integer.valueOf(new String(str)));
+                    swap(str, i, j);
+                }
+            }
+        }
+        return result == 0 ? num : result;
+    }
+    
+    public void swap(char[] str, int i, int j) {
+        char temp = str[j];
+        str[j] = str[i];
+        str[i] = temp;
+    }
+              
+    //using bucket O(n)
+    public int bucket(int num) {
+        char[] str = String.valueOf(num).toCharArray();
+        
+        int[] bucket = new int[10];
+        for (int i = 0; i < str.length; i++) {
+            bucket[str[i] - '0'] = i;
+        }
+        
+        for (int i = 0; i < str.length; i++) {
+            for (int k = 9; k > str[i] - '0'; k--) {
+                if (bucket[k] > i) {
+                    char temp = str[i];
+                    str[i] = str[bucket[k]];
+                    str[bucket[k]] = temp;
+                    return Integer.valueOf(new String(str));
+                }
+            }
+        }
+        return num;
+    }
+}

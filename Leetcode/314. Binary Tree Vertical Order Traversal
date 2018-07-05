@@ -1,0 +1,77 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
+        List<List<Integer>> result = new LinkedList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        Map<Integer, List<Integer>> map = new TreeMap<>();
+        iterate(root, map, result);
+        return result;
+    }
+    public List<List<Integer>> verticalOrde1r(TreeNode root) {
+        List<List<Integer>> result = new LinkedList<List<Integer>>();
+        if (root == null) {
+            return result;
+        }
+        Map<Integer, List<Integer>> map = new TreeMap<>();
+        preOrder(root, map, 0);
+        Iterator<Map.Entry<Integer, List<Integer>>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, List<Integer>> entry = it.next();
+            result.add(entry.getValue());
+        }
+        return result;
+    }
+    
+    public void preOrder(TreeNode root, Map<Integer, List<Integer>> map, int hd) {
+        if (root == null) {
+            return;
+        }
+        if (!map.containsKey(hd)) {
+            map.put(hd, new LinkedList<Integer>());
+        }
+        map.get(hd).add(root.val);
+        preOrder(root.left, map, hd - 1);
+        preOrder(root.right, map, hd + 1);
+    }
+    private class TreeColumnNode{
+        public TreeNode treeNode;
+        int col;
+        public TreeColumnNode(TreeNode node, int col) {
+            this.treeNode = node;
+            this.col = col;
+        }
+    }
+    public void iterate(TreeNode root, Map<Integer, List<Integer>> map, List<List<Integer>> result) {
+        Queue<TreeColumnNode> queue = new LinkedList<TreeColumnNode>();
+        queue.add(new TreeColumnNode(root, 0));
+        while(!queue.isEmpty()) {
+            TreeColumnNode cur = queue.poll();
+            int hd = cur.col;
+            if (!map.containsKey(hd)) {
+                map.put(hd, new LinkedList<Integer>());
+            }
+            map.get(hd).add(cur.treeNode.val);
+            if (cur.treeNode.left != null) {
+                queue.add(new TreeColumnNode(cur.treeNode.left, hd - 1));
+            }
+            if (cur.treeNode.right != null) {
+                queue.add(new TreeColumnNode(cur.treeNode.right, hd + 1));
+            }
+        }
+        Iterator<Map.Entry<Integer, List<Integer>>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, List<Integer>> entry = it.next();
+            result.add(entry.getValue());
+        }
+    }
+}

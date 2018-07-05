@@ -1,0 +1,68 @@
+class Solution {
+    //https://segmentfault.com/a/1190000003794831
+    //http://www.cnblogs.com/grandyang/p/4781203.html
+    public int hIndex(int[] citations) {
+        return method2(citations);
+    }
+    
+    /*
+    H指数的计算基于其研究者的论文数量及其论文被引用的次数。赫希认为：一个人在其所有学术文章中有N篇论文分别被引用了至少N次，他的H指数就是N。[1][2]如美国耶鲁大学免疫学家理查德·弗来沃发表的900篇文章中，有107篇被引用了107次以上，他的H指数是107。
+
+可以按照如下方法确定某人的H指数：
+
+将其发表的所有SCI论文按被引次数从高到低排序；
+从前往后查找排序后的列表，直到某篇论文的序号大于该论文被引次数。所得序号减一即为H指数。*
+    //用排序
+    public int method1(int[] citations) {
+        if (citations == null || citations.length == 0) {
+            return 0;
+        }       
+        
+        Arrays.sort(citations);
+        
+        int i = 0;
+        int length = citations.length - 1;
+        while (i < citations.length) {
+            if (citations[length - i] > i) {
+                i++;
+            } else {
+                return i;
+            }
+        }
+        
+        return i;
+    }
+    
+    
+    //用倒排索引 
+    /*
+    复杂度
+时间 O(N) 空间 O(N)
+
+思路
+也可以不对数组排序，我们额外使用一个大小为N+1的数组stats。stats[i]表示有多少文章被引用了i次，这里如果一篇文章引用大于N次，我们就将其当为N次，因为H指数不会超过文章的总数。为了构建这个数组，我们需要先将整个文献引用数组遍历一遍，对相应的格子加一。统计完后，我们从N向1开始遍历这个统计数组。如果遍历到某一个引用次数时，大于或等于该引用次数的文章数量，大于引用次数本身时，我们可以认为这是H指数。之所以不用再向下找，因为我们要取最大的H指数。那如何求大于或等于某个引用次数的文章数量呢？我们可以用一个变量，从高引用次的文章数累加下来。因为我们知道，如果有x篇文章的引用大于等于3次，那引用大于等于2次的文章数量一定是x加上引用次数等于2次的文章数量。*/
+    public int method2(int[] citations) {
+        if (citations == null || citations.length == 0) {
+            return 0;
+        }
+        
+        int[] count = new int[citations.length + 1];
+        
+        for (int frequence : citations) {
+            if (frequence >= citations.length) {
+                count[citations.length]++;
+            } else {
+                count[frequence]++;
+            }
+        }
+        
+        int result = 0;
+        for (int i = count.length - 1; i >=0; i--) {
+            result += count[i];
+            if (result >= i) {
+                return i;
+            }
+        }
+        return  0;
+    } 
+}

@@ -1,0 +1,243 @@
+class Solution {
+    public boolean validTree(int n, int[][] edges) {
+        //dfs
+        // return method2(n, edges);
+        
+        //bfs 
+        // return method3(n, edges);
+        
+        //return bfs3(n, edges);
+        
+        return bfs4(n, edges);
+    }
+    
+    /*
+    我们知道如果是树的话，所有的节点必须是连接的，也就是说必须是连通图，而且不能有环，所以我们的焦点就变成了验证是否是连通图和是否含有环
+    这道题是验证 树， 不是二叉树， 所以我们不需要管 每个节点是不是会多与两个孩子*/
+    public boolean method1(int n, int[][] edges) {
+        if (edges == null || edges == null) {
+            return false;
+        }   
+        UnionFind uf = new UnionFind(n);
+        
+        for (int[] edge : edges) {
+            int p = edge[0];
+            int q = edge[1];
+            if (uf.connected(p, q)) {  // 有huan
+                return false;
+            }
+            uf.union(p,q);
+        }
+        
+        return uf.count == 1;
+    }
+    
+    
+    class UnionFind {
+        int[] size;
+        int[] root;
+        int count;
+        public UnionFind(int n) {
+            size = new int[n];
+            root = new int[n];
+            count = n;
+            for (int i = 0; i < n; i++) {
+                size[i] = 1;
+                root[i] = i;
+            }
+        }
+        
+        public int find(int x) {
+            while (x != root[x]) {
+                root[x] = root[root[x]];
+                x = root[x];
+            }
+            return x;
+        }
+        
+        public boolean connected(int p, int q) {
+            int rootp = find(p);
+            int rootq = find(q);
+            if (rootp == rootq) {
+                return true;
+            }
+            return false;
+        }
+        
+        public void union(int p, int q) {
+            int rootp = find(p);
+            int rootq = find(q);
+            if (p == q) {
+                return;
+            }
+            
+            if (size[p] > size[q]) {
+                root[rootq] = rootp;
+                size[rootp] += size[rootq];
+            } else {
+                root[rootp] = rootq;
+                size[rootq] += size[rootp];
+            }
+            
+            count--;
+        }
+    }
+    
+    //create undirected graph and doing dfs
+    public boolean method2(int n, int[][] edges) {
+        if (edges == null) {
+            return false;
+        }
+        List<List<Integer>> graph = new ArrayList<List<Integer>>();
+        for (int i = 0; i < n; i++) {
+            graph.add(new ArrayList<Integer>());
+        }
+        for (int[] edge : edges) {
+            int a = edge[0];
+            int b = edge[1];
+            graph.get(a).add(b);
+            graph.get(b).add(a);
+        }
+        
+        HashSet<Integer> set = new HashSet<Integer>();
+        //detect cycle
+        
+        if (dfs(graph, 0, set, -1)) {
+            return false;
+        }
+        
+        
+        // make sure all vertices are connected
+        for (int i = 0; i < n; i++) {
+            if (!set.contains(i)) {  // if we found have other nodes which not visited yet means it's more than one connected component
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean dfs(List<List<Integer>> graph, int i, HashSet<Integer> set, int parent) {
+        set.add(i);
+        
+        for (int j : graph.get(i)) {
+            if (set.contains(j) && j != parent) {
+                return true;
+            }
+            if (set.contains(j)) {
+                continue;
+            }
+            
+            if (dfs(graph, j, set, i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
+    //bfs
+     public boolean method3(int n, int[][] edges) {
+        return bfs(n, edges);  
+     } 
+    
+    public boolean bfs(int n, int[][] edges) {
+        // write your code here
+        if (n - 1 != edges.length) {// 这里可以直接检测 这个graph 是不是有cycle 画个图就知道了
+            return false;
+        }
+        
+        if (n == 1) {
+            return true;
+        }
+        
+        List<List<Integer>> graph = new ArrayList<List<Integer>>();
+        for (int i = 0; i < n; i++) {
+            graph.add(new ArrayList<Integer>());
+        }
+        for (int[] edge : edges) {
+            int a = edge[0];
+            int b = edge[1];
+            graph.get(a).add(b);
+            graph.get(b).add(a);
+        }
+        
+        Queue<Integer> queue = new LinkedList<>();
+        Set<Integer> visited = new HashSet<>();
+        queue.offer(0);
+        visited.add(0);
+        
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            
+            for (int neighbor : graph.get(node)) {
+                if (visited.contains(neighbor)) {
+                    continue;
+                }
+                
+                queue.offer(neighbor);
+                visited.add(neighbor);
+            }
+        }
+        
+        return visited.size() == n;
+    }
+    
+    public boolean bfs3(int n, int[][] edges) {
+        int[] visited = new int[n];
+        List<List<Integer>> adjList = new ArrayList<>();
+        for (int i=0; i<n; ++i) { adjList.add(new ArrayList<Integer>()); }
+        for (int[] edge: edges) {
+            adjList.get(edge[0]).add(edge[1]);
+            adjList.get(edge[1]).add(edge[0]);
+        }
+        LinkedList<Integer> q = new LinkedList<Integer>();
+        q.offer(0); visited[0] = 1;  // vertex 0 is in the queue, being visited
+        while (!q.isEmpty()) {
+            Integer cur = q.poll();
+            for (Integer succ: adjList.get(cur)) {
+                if (visited[succ] == 1) { return false; }  // loop detected
+                if (visited[succ] == 0) { q.offer(succ); visited[succ] = 1; }
+            }
+            visited[cur] = 2;  // visit completed 为了mark parent
+        }
+        for (int v: visited) { if (v == 0) { return false; } }  // # of connected components is not 1
+        return true;
+    }
+    
+    //
+    public boolean bfs4(int n, int[][] edges) {
+        // n must be at least 1
+        if (n < 1) return false;
+
+        // create hashmap to store info of edges
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        for (int i = 0; i < n; i++) map.put(i, new HashSet<>());
+        for (int[] edge : edges) {
+            map.get(edge[0]).add(edge[1]);
+            map.get(edge[1]).add(edge[0]);
+        }
+
+        // bfs starts with node in label "0"
+        Set<Integer> set = new HashSet<>();
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(0);
+        set.add(0);
+        while (!queue.isEmpty()) {
+            int top = queue.remove();
+            for (int node : map.get(top)) {
+                if (set.contains(node)) {
+                    return false;
+                }
+                queue.add(node);
+                set.add(node);
+                // we should remove the edge: node -> top
+                // after adding a node into set to avoid duplicate
+                // since we already consider top -> node
+                map.get(node).remove(top);    //其实这里上面的 visited[cur] = 2 性质是一样的， 是为了把paretn remove 掉
+            }
+            
+        }
+        return set.size() == n;
+    }
+    
+}

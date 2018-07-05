@@ -20,7 +20,7 @@ class Solution {
         for (int i = 0; i < m; i++) {
             if (s.charAt(i) != t.charAt(i)) {
                 if (isSameLength) {
-                    return s.substring(i + 1).equals(t.substring(i + 1));
+                    return s.substring(i + 1).equals(t.substring(i + 1)); //有个知识点要记住 java substring(startIndex). Startindex 如果是str的长度， 最后得到的是empty string
                 } else {
                     return s.substring(i).equals(t.substring(i+1));
                 }
