@@ -1,0 +1,52 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int count = 0;  //这里count必须放在外面，因为 java int 是copy 传递。 不能用k
+    public int kthSmallest(TreeNode root, int k) {
+        count = k;
+        dfs(root);
+        
+        return pre.val;
+        // return iterate(root, k);
+    }
+    
+    TreeNode pre = null;
+    public void dfs(TreeNode root) {
+        if (root == null ) {
+            return;
+        }
+        
+        dfs(root.left);
+        --count;
+        if (count == 0) {
+            pre = root;  // 这里pre = root 只能放在这里 不然 放在外面， pre 就指向最后一个node 了
+            return;
+        } 
+        
+        dfs(root.right);
+    }
+    
+    public int iterate(TreeNode root, int k) {
+        LinkedList<TreeNode> stack = new LinkedList<TreeNode>();
+        
+        while (root != null || !stack.isEmpty()) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            TreeNode cur = stack.pop();
+            if (--k == 0) {
+                return cur.val;
+            }
+            root = cur.right;
+        }
+        return -1;
+    }
+}

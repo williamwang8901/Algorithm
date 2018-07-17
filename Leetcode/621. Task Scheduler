@@ -1,0 +1,73 @@
+class Solution {
+    
+    class Node {
+        char c;
+        int count;
+        
+        public Node(char c, int count) {
+            this.c = c;
+            this.count = count;
+        }
+    }
+    public int leastInterval(char[] tasks, int n) {
+        if (tasks == null || tasks.length == 0) {
+            return 0;
+        }
+        
+        int[] count = new int[26];
+        for (char task : tasks) {
+            count[task - 'A']++;
+        }
+        
+        Comparator<Node> comparator = new Comparator<Node>(){
+            public int compare(Node o1, Node o2) {
+                return o2.count - o1.count;
+            }  
+        };
+        PriorityQueue<Node> pq = new PriorityQueue<Node>(comparator);
+        for(int i = 0; i < 26; i++) {
+            if (count[i] != 0) {
+                char cur = (char)('A' + i);
+                pq.offer(new Node(cur, count[i]));
+            }
+        }
+        
+        int result = 0;
+        
+        StringBuilder sb = new StringBuilder();
+        while (!pq.isEmpty()) {. nlogn
+            
+            List<Node> list = new ArrayList<Node>();
+            int k = n + 1;
+            
+            while (k > 0 && !pq.isEmpty()) {
+                
+                if (!pq.isEmpty()) {
+                    Node cur = pq.poll();
+                    sb.append(cur.c);
+                    cur.count--;
+                    if (cur.count > 0) {
+                        list.add(cur);
+                    }
+                } else {
+                    sb.append("idle");
+                }
+                result++;
+                k--;
+            }
+            
+            
+            for (Node node : list) {
+                pq.offer(node);
+            }
+            
+             if (pq.size() == 0) {
+                    System.out.println(sb.toString());
+                    return result;
+            }
+            
+            result += k;
+        }
+        return 0;
+    }
+}

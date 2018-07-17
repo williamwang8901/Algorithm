@@ -1,0 +1,65 @@
+public class Solution {
+    //http://www.cnblogs.com/grandyang/p/5849037.html
+    //http://www.programcreek.com/2014/09/leetcode-decode-string-java/
+    //http://www.guoting.org/leetcode/leetcode-394-decode-string/
+    int i = 0;  //here we must to set i as global variable since we need it get to changed after we call decode function
+    public String decodeString1(String s) {
+        String result = "";
+        if (s == null || s.length() == 0) {
+            return result;
+        }
+        char[] s_array = s.toCharArray();
+        return decode(s_array);
+    }
+    public String decode (char[] s) { 
+        StringBuilder sb = new StringBuilder();
+        int n = s.length;
+        while (i < n && s[i] != ']') {
+            if (s[i] < '0' || s[i] > '9') {
+                sb.append(s[i++]);
+            } else {
+                int cnt = 0;
+                while (i < n && s[i] >= '0' && s[i] <= '9') {
+                    cnt = cnt * 10 + s[i++] - '0';
+                }
+                ++i; //jump to skip '['
+                String t = decode(s);
+                ++i;// jump to skip ']'
+                while (cnt-- > 0) {
+                    sb.append(t);
+                }
+            }
+        }
+        return sb.toString();
+    }
+    
+    //method 2 using stack
+    public String decodeString(String s) {
+        String res = "";
+        StringBuilder sb = new StringBuilder();
+        LinkedList<Integer> stack_num = new LinkedList<>();
+        LinkedList<String> stack_str = new LinkedList<>();
+        int cnt = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char cur = s.charAt(i);
+            if (cur >= '0' && cur <= '9') {
+                cnt = 10 * cnt + cur - '0';
+            } else if (cur == '[') {
+                stack_num.push(cnt);
+                stack_str.push(sb.toString());
+                cnt = 0;
+                sb.setLength(0);
+            } else if (cur == ']') {
+                int k = stack_num.pop();
+                StringBuilder top = new StringBuilder(stack_str.pop());
+                for (int j = 0; j < k; j++) {
+                    top.append(sb);
+                }
+                sb = top;
+            } else {
+                sb.append(cur);
+            }
+        }
+        return sb.toString();
+    }
+}

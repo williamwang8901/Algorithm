@@ -1,0 +1,134 @@
+class Solution {
+    public int minDistance(String word1, String word2) {
+        // return bruteForce(word1, word2);
+        
+        return bottomUp(word1, word2);
+    }
+    
+    /*
+    a) Insert a character
+    b) Delete a character
+    c) Replace a character
+
+    首先说一下这题，这样的题目肯定是两个单词从头开始往后匹配着走的。那么如果说i是word1的当前长度，j是word2的当前长度。a表示的其实就是i不变的情况下，j + 1走入下一层递归。b条件表示的就是j不变的情况下i + 1走入下一层，c条件表示的就是i + 1, j + 1同时走入下一层。当然以上三种情况都只会在word1[i] != word2[j]的情况下才去考虑的，操作数+1。 word1[i] == word2[j]的时候也是i + 1, j + 1走入下一层，但是操作数不变。暴力递归的方式实际上就是在遇到word1[i] != word2[j]的时候产生三个递归分支，取其中返回的最小值，然后加1。而在word1[i] == word2[j]的时候直接返回下一层的计算结果。截枝所要做的其实就是防止重复递归，也就是譬如当我第一次走到word1[i], word2[j]的时候，我就保留我得到的结果，下一层再进入同样条件的时候，我可以直接返回我储存好的结果。所以为了截枝，我实际上需要一个二维整型数组cached[word1.length()][word2.length]保留我的状态。给出代码如下：*/
+
+    public int bruteForce(String word1, String word2) {
+        if (word1 == null || word1.length() == 0) return word2.length();
+        if (word2 == null || word2.length() == 0) return word1.length();
+        
+        return match(word1, word2, 0, 0);
+    }
+    
+    public int match(String word1, String word2, int i, int j) {
+        if (word1.length() == i) {
+            return word2.length() - j;
+        }
+        
+        if (word2.length() == j) {
+            return word1.length() - i;
+        }
+        
+        if (word1.charAt(i) == word2.charAt(j)) {
+            return match(word1, word2, i + 1, j + 1);
+        }
+        
+        int insert = match(word1, word2, i, j + 1);
+            
+        int delete = match(word1, word2, i + 1, j);
+            
+        int replace = match(word1, word2, i + 1, j + 1);
+        
+        return Math.min(insert, Math.min(delete, replace)) + 1;
+    }
+    
+    //https://blog.csdn.net/chaochen1407/article/details/43309723
+    //https://blog.csdn.net/u011095253/article/details/9248103
+    //https://leetcode.com/problems/edit-distance/discuss/25846/20ms-Detailed-Explained-C++-Solutions-(O(n)-Space)
+    ///https://leetcode.com/problems/edit-distance/discuss/25895/Step-by-step-explanation-of-how-to-optimize-the-solution-from-simple-recursion-to-DP
+    //https://controny.github.io/2018/02/24/leetcode-editdistance/
+    
+    /*
+    首先给出递归式
+
+    f(0, i) = i, 这表示word1取空子集的时候，word2取i长度的子串的时候。word1需要insert i次。
+
+    f(i, 0) = i, 这表示word1取i长度的子串的时候，word2取空集的时候，word1需要delete i次。
+
+    f(i, j) = f(i - 1, j - 1) if(word1[i] == word2[j])， 
+
+    f(i, j) = min(f(i, j - 1), f(i - 1, j), f(i - 1, j - 1)) + 1。 以上这两个推导式实际上就是暴力递归的条件的翻版。*/
+    public int bottomUp(String word1, String word2) {
+        if (word1 == null || word2 == null) return -1;
+        if (word1.length() == 0) return word2.length();
+        if (word2.length() == 0) return word1.length();
+        
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+        
+        for(int i = 1; i <= word1.length(); i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 1; j <= word2.length(); j++) {
+            dp[0][j] = j;
+        }
+        
+        for (int i = 1; i <= word1.length(); i++) {
+            for (int j = 1; j <= word2.length(); j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                    continue;
+                }
+                
+                dp[i][j] = Math.min(dp[i - 1][j - 1], Math.min(dp[i - 1][j], dp[i][j - 1])) + 1;
+            }
+        }
+        return dp[word1.length()][word2.length()];   
+    }
+
+
+    /**
+     * Optimization using dynamic programming
+     * Top-down solution
+     * O(len1 * len2) time, O(len1 * len2) space
+     */
+    public int memorize(String word1, String word2) {
+        if (word1 == null || word2 == null) return -1;
+        if (word1.length() == 0) return word2.length();
+        if (word2.length() == 0) return word1.length();
+        
+        char[] c1 = word1.toCharArray();
+        char[] c2 = word2.toCharArray();
+        
+        int[][] cache = new int[c1.length][c2.length];
+        for (int i = 0; i < c1.length; i++) {
+            for (int j = 0; j < c2.length; j++) {
+                cache[i][j] = -1;
+            }
+        }
+        
+        return match(c1, c2, 0, 0, cache);
+    }
+    
+    private int match(char[] c1, char[] c2, int i, int j, int[][] cache) {
+        if (c1.length == i) return c2.length - j;
+        if (c2.length == j) return c1.length - i;
+        
+        if (cache[i][j] != -1) {
+            return cache[i][j];
+        }
+        
+        if (c1[i] == c2[j]) {
+            cache[i][j] = match(c1, c2, i + 1, j + 1, cache);
+        } else {
+            //Case1: insert
+            int insert = match(c1, c2, i, j + 1, cache);
+            //Case2: delete
+            int delete = match(c1, c2, i + 1, j, cache);
+            //Case3: replace
+            int replace = match(c1, c2, i + 1, j + 1, cache);
+            
+            cache[i][j] = Math.min(Math.min(insert, delete), replace) + 1;
+        }
+        
+        return cache[i][j];
+    }
+}

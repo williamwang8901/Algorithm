@@ -1,0 +1,44 @@
+/* The read4 API is defined in the parent class Reader4.
+      int read4(char[] buf); */
+
+//其实这道题优点二逼，
+/*
+Each time read() is called, we need to provide a new buf to store read characters, therefore, the return value of int read() is simply the length of buf.
+所以我们才把 count 定义在 read（） 里面 因为每次 count 都是从0 开始 覆盖前面已经读到的 char
+*/
+
+public class Solution extends Reader4 {
+    /**
+     * @param buf Destination buffer
+     * @param n   Maximum number of characters to read
+     * @return    The number of characters read
+     */
+    char[] temp = new char[4];
+    int tempCount = 0;
+    int tempPointer = 0;
+    public int read(char[] buf, int n) {
+        int count = 0;
+        
+        while (count < n) {
+            if (tempPointer == 0) {
+                tempCount = read4(temp);
+            }
+            
+            int actual = Math.min(tempCount - tempPointer,  n - count);
+            
+            for (int i = 0; i < actual; i++) {
+                buf[count++] = temp[tempPointer++];
+            }
+            
+            // all chars in buff used up, set pointer to 0
+            if (tempPointer == tempCount) {
+                tempPointer = 0;
+            }
+            // read4 returns less than 4, end of file
+            if (tempCount < 4) {
+                break;
+            }
+        }
+        return count;
+    }
+}

@@ -14,12 +14,14 @@ class Solution {
             int timeStamp = Integer.valueOf(arr[2]);
             if (arr[1].equals("start")) {
                 if (!stack.isEmpty()) {
-                   result[stack.peek()] += timeStamp - preTime;      
+                   result[stack.peek()] += timeStamp - preTime;   
+		// arr[2] is the start of next interval, doesn't belong to current interval.   
                } 
                 stack.push(id);
                 preTime = timeStamp;
             } else {
                 result[stack.peek()] += timeStamp - preTime + 1;
+		// arr[2] is end of current interval, belong to current interval. That's why we have +1 here
                 preTime = timeStamp + 1;
                 stack.pop();
             }

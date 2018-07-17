@@ -1,0 +1,56 @@
+class Solution {
+    public int missingNumber(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        // return sum(nums);
+        // return Xor(nums);
+        return binarySearch(nums);
+    }
+    
+    
+    public int sum (int[] nums) {
+        int sum = (0 + nums.length) * (nums.length + 1) / 2;
+        
+        for (int num : nums) {
+            sum -= num;
+        }
+        return sum;
+    }
+    
+    public int Xor(int[] nums) {
+        // a^b^b = a;
+        
+        int result = nums.length;
+        
+        for (int i = 0; i < nums.length; i++) {
+            result ^=  i ^ nums[i]; 
+        }
+        
+        return result;
+    }
+    
+    //the array is already sorted, you could just compare the index with the value, if they're not equal, then you find the missing number which is exactly the index
+    public int binarySearch(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return -1;
+        }
+        
+        Arrays.sort(nums);
+        
+        int left = 0;
+        int right = nums.length;
+        
+        while (left  < right) {
+            int mid = left + ((right - left) >> 1);
+            
+            if (nums[mid] == mid) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+}

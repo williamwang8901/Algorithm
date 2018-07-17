@@ -1,0 +1,45 @@
+class Solution {
+    public int findLengthOfLCIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        int length = 0;
+        int counter = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i] <= nums[i - 1]) {
+                counter = 1;
+                continue;
+            } 
+            
+            counter++;
+            
+            length = Math.max(length, counter);
+        }
+        
+        return length;
+    }
+}
+
+
+class Solution {
+    public int findLengthOfLCIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        int count = 0;
+        int result = 0;
+        
+        for (int i = 0; i < nums.length; i++) {
+            if (i == 0 || nums[i] > nums[i - 1]) {
+                count++;
+            } else {
+                result = Math.max(result, count);
+                count = 1;
+            }
+        }
+        result = Math.max(result, count);
+        return result;
+    }
+}

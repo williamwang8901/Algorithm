@@ -1,0 +1,77 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    
+    public boolean findTarget(TreeNode root, int k) {
+        if (root == null) {
+            return false;
+        }    
+        // return findTarget1(root, k);
+        
+        return findTarget2(root, root, k);
+    }
+    
+    //Approach 1 Using hashset . which does not need to use the propery of bst
+    public boolean findTarget1(TreeNode root, int k) {
+        if (root == null) {
+            return false;
+        }    
+        HashSet<Integer> set = new HashSet<Integer>();
+        return dfs(root, k, set);
+    }
+    
+    public boolean dfs(TreeNode root, int k, HashSet<Integer> set) {
+        if (root == null) {
+            return false;
+        }
+        if (set.contains(k - root.val)) {
+            return true;
+        }
+        
+        set.add(root.val);
+        return dfs(root.left, k, set) || dfs(root.right, k, set);
+        
+    }
+    
+    /*
+    The idea is to use binary search method. For each node, we check if k - node.val exists in this BST.
+
+Time Complexity: O(nlogn), Space Complexity: O(h). h is the height of the tree, which is logn at best case, and n at worst case.
+
+*/
+    
+    public boolean findTarget2(TreeNode root, TreeNode cur, int k) {  //这里多传一个root 是为了每次search的时候 可以从root 开始search
+        if (cur == null) {
+            return false;
+        }
+        
+        if (search(root, cur, k - cur.val)) {
+            return true;
+        }
+        
+        if (findTarget2(root, cur.left, k)) {
+            return true;
+        }
+        
+        return findTarget2(root, cur.right, k);
+    }
+    
+    public boolean search(TreeNode root, TreeNode cur, int target) {
+        if (root == null) {
+            return false;
+        }
+        if (root != cur && root.val == target) {
+            return true;
+        }
+        return target < root.val ? search(root.left, cur, target) : search(root.right, cur, target);
+    }
+    
+    
+}

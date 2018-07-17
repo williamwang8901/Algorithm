@@ -1,0 +1,33 @@
+/* The read4 API is defined in the parent class Reader4.
+      int read4(char[] buf); */
+
+//这里 buf 是destitiona temp 是我们用来读取数据到temp。然后把temp 里面的copy 到 buf destition
+
+public class Solution extends Reader4 {
+    /**
+     * @param buf Destination buffer
+     * @param n   Maximum number of characters to read
+     * @return    The number of characters read
+     */
+    public int read(char[] buf, int n) {
+        int count = 0;        
+        boolean eof = false;
+        char[] temp = new char[4];
+        while (count < n) {
+            
+            int read = read4(temp);
+            
+            read = Math.min(read, n - count);
+            
+            for (int i = 0; i < read; i++) {
+                buf[count + i] = temp[i];
+            }
+            count += read;
+            if (read < 4) {
+                break;
+            }
+            
+        }
+        return count;
+    }
+}

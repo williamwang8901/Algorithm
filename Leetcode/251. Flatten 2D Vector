@@ -1,4 +1,82 @@
 public class Vector2D implements Iterator<Integer> {
+private final Iterator<List<Integer>> listIterator;
+    private Iterator<Integer> sublistIterator;
+    
+    public Vector2D(List<List<Integer>> vec2d) {
+        listIterator = vec2d.iterator();
+        advanceListIterator();
+    }
+
+    private void advanceListIterator() {
+        while (listIterator.hasNext()) {
+            sublistIterator = listIterator.next().iterator();
+            if (sublistIterator.hasNext()) {
+                break;
+            }
+        }
+    }
+    
+    @Override
+    public Integer next() {
+        if (!hasNext()) {
+            throw new java.util.NoSuchElementException();
+        }
+        Integer ret = sublistIterator.next();
+        if (!sublistIterator.hasNext()) {
+            advanceListIterator();
+        }
+        return ret;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return sublistIterator != null && sublistIterator.hasNext();
+    }
+}
+
+/**
+ * Your Vector2D object will be instantiated and called as such:
+ * Vector2D i = new Vector2D(vec2d);
+ * while (i.hasNext()) v[f()] = i.next();
+ */
+
+ public class Vector2D implements Iterator<Integer> {
+private Iterator<List<Integer>> rowIterator;
+    private Iterator<Integer> colIterator;
+    
+    public Vector2D(List<List<Integer>> vec2d) {
+        rowIterator = vec2d.iterator();
+        colIterator = Collections.emptyIterator();
+    }
+ 
+    
+    @Override
+    public Integer next() {
+        return colIterator.next();
+    }
+
+    @Override
+    public boolean hasNext() {
+        advanceIterator();
+        return colIterator.hasNext();
+    }
+    
+    public void advanceIterator() {
+        while (!colIterator.hasNext()  && rowIterator.hasNext()) {
+            colIterator = rowIterator.next().iterator();
+        }
+    }
+    
+}
+
+/**
+ * Your Vector2D object will be instantiated and called as such:
+ * Vector2D i = new Vector2D(vec2d);
+ * while (i.hasNext()) v[f()] = i.next();
+ */
+
+
+ public class Vector2D implements Iterator<Integer> {
     Iterator<List<Integer>> i;
     Iterator<Integer> j;
     public Vector2D(List<List<Integer>> vec2d) {

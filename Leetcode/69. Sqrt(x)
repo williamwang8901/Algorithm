@@ -1,0 +1,42 @@
+class Solution {
+    //找第一个比目标大的数
+    public int mySqrt(int x) {
+        if (x == 1) {
+            return 1;
+        }
+        long left = 0;
+        long right = x / 2  + 1;   // 这里必须是 x / 2 + 1 不然如果是x+1 x 是整数 + 1 会溢出，除非我们直接把x 转换成long 再 + 1
+        while (left < right) {
+            long mid = left + ((right - left) >> 1);  //如果两个 变量之前没有 说明是long int 相乘是会溢出的。必须吧mid 和 result 定义成 long
+            long result = mid * mid;
+            if (result <= x) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        } 
+        return (int)(left - 1);   //这一步是为了处理 x == 1 的情况
+    }
+}
+
+这两个区别是 看 在哪里处理 x 是1 的情况
+
+class Solution {
+    //找第一个比目标大的数
+    public int mySqrt(int x) {
+        long left = 0;
+        long right = x / 2  + 1;   // 这里必须是 x / 2
+        while (left < right) {
+            long mid = left + ((right - left) >> 1);  //如果两个 变量之前没有 说明是long int 相乘是会溢出的。必须吧mid 和 result 定义成 long
+            long result = mid * mid;
+            if (result <= x) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        } 
+        return (int)(left * left == x ? left : left - 1);   //这一步是为了处理 x == 1 的情况
+    }
+}
+
+

@@ -8,81 +8,83 @@
  * }
  */
 class Solution {
-    
     public int minMeetingRooms(Interval[] intervals) {
-        return scanLine(intervals);
-    }
-        
-    public int priorityQueue(Interval[] intervals) {
         if (intervals == null || intervals.length == 0) {
             return 0;
         }
+        // return method1(intervals);
+        return method2(intervals);
+    }
+    
+    //using pq
+    public int method1(Interval[] intervals) {
         
-            // Sort the intervals by start time
-        Arrays.sort(intervals, new Comparator<Interval>() {
-            public int compare(Interval a, Interval b) { return a.start - b.start; }
-        });
+        //先按照开始排序
+        Comparator<Interval> comparator1 = new Comparator<Interval>(){
+            public int compare(Interval o1, Interval o2) {
+                return o1.start - o2.start;
+            }
+        };
         
+        Arrays.sort(intervals, comparator1);
         
-        //按照end 排序， 最先结束的会议 先弹出queue
-        Comparator<Interval> comparator = new Comparator<Interval>(){
+        //using for pq  //按照end 排序， 最先结束的会议 先弹出queue
+        Comparator<Interval> comparator2 = new Comparator<Interval>(){
             public int compare(Interval o1, Interval o2) {
                 return o1.end - o2.end;
             }
         };
-        PriorityQueue<Interval> pq = new PriorityQueue<Interval>(comparator);
         
         int result = 0;
-        
-        for (Interval interval : intervals) {
-            if (!pq.isEmpty()) {
-                if (pq.peek().end <= interval.start) {
-                    pq.poll();
-                }
+        PriorityQueue<Interval> pq = new PriorityQueue<Interval>(comparator2);
+        for(Interval interval : intervals) {
+            if (pq.size() == 0) {
                 pq.offer(interval);
-            } else {
-                pq.offer(interval);
+                continue;
             }
-            result = Math.max(result, pq.size());
+            
+            if (interval.start >= pq.peek().end) {
+                pq.poll();
+            }
+            pq.offer(interval);  //这里贼神奇，不管我们弹出 还是不弹出，每次都要offer到queue里面，自己举些例子就明白了
+            
         }
-        return result;
+        return pq.size();
     }
     
-    //用扫描线    很经典
-    public int scanLine(Interval[] intervals) {
-        if (intervals == null || intervals.length == 0) {
-            return 0;
-        }
-        
+    
+    //swipe line
+    public int method2(Interval[] intervals) {
         List<int[]> list = new ArrayList<int[]>();
         for (Interval interval : intervals) {
-            list.add(new int[]{interval.start, 1});
-            list.add(new int[]{interval.end, -1});
+            list.add(new int[]{interval.start, 0});  // 0 means start
+            list.add(new int[]{interval.end, 1}); // 1 means end
         }
         
         Comparator<int[]> comparator = new Comparator<int[]>(){
             public int compare(int[] a, int[] b) {
                 if (a[0] == b[0]) {
-                    return a[1] - b[1];  //如果又一个start 和end 都相等，那我们就把 end 放前面 这样可以先free 一个房间
+                    return b[1] - a[1];  // 如果时间相等， 结束的放前面
+                } else {  
+                    return a[0] - b[0];  //时间不想等，就直接按大小排序
                 }
-                return a[0] - b[0];
             }  
         };
         
         Collections.sort(list, comparator);
         
-        int result = 0;
         int count = 0;
+        int result = 0;
         for (int[] time : list) {
-            System.out.println(time[0]);
-            System.out.println(time[1]);
-            if (time[1] == 1) { //是start
-                count++;
+            if (time[1] == 0) {
+                count++; 
+                result = Math.max(result, count);
             } else {
                 count--;
             }
-            result = Math.max(result, count);
         }
         return result;
     }
+    
+    
 }

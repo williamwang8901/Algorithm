@@ -1,0 +1,75 @@
+class Solution {
+    /*
+    所谓二分图，就是可以将图中的所有顶点分成两个不相交的集合，使得同一个集合的顶点不相连。为了验证是否有这样的两个不相交的集合存在，我们采用一种很机智的染色法，大体上的思路是要将相连的两个顶点染成不同的颜色，一旦在染的过程中发现有两连的两个顶点已经被染成相同的颜色，说明不是二分图*/
+    //Our goal is trying to use two colors to color the graph and see if there are any adjacent nodes having the same color.
+    public boolean isBipartite(int[][] graph) {
+        if (graph == null || graph.length == 0) {
+            return false;
+        }
+        // return dfs(graph);
+        return bfs(graph);
+    }
+    
+    public boolean dfs(int[][] graph) {
+        int[] visited = new int[graph.length];
+        
+        for (int i = 0; i < graph.length; i++) {
+            if ((visited[i] == 0) && recursive(graph, visited, i, 1)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean recursive(int[][] graph, int[] visited, int i, int color) {
+        visited[i] = color;
+        for (int j : graph[i]) {
+            if (visited[j] != 0 && visited[j] == color) {  //相邻的两个定点被染成同一种颜色 说明不是bigraph
+                return true;
+            }
+            if (visited[j] != 0) {
+                continue;
+            }
+            if (recursive(graph, visited, j, -1 * color)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean bfs(int[][] graph) {
+        int[] visited = new int[graph.length];
+        
+        for (int i = 0; i < graph.length; i++) {
+            if ((visited[i] == 0) && iterate(graph, visited, i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean iterate(int[][] graph, int[] visited, int i) {
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+        queue.offer(i);
+        int color = 1;
+        visited[i] = color;
+        while (!queue.isEmpty()) {
+            int cur = queue.poll();            
+            for (int j : graph[cur]) {
+                if (visited[j] != 0 && visited[j] == visited[cur]) {
+                    return true;
+                }
+                
+                if (visited[j] != 0) {
+                    continue;
+                }
+                
+                visited[j] = -1 * visited[cur];
+                
+                queue.offer(j);
+            }
+        }
+        return false;
+    }
+    
+}

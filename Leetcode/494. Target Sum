@@ -108,6 +108,9 @@ class Solution {
             sum += num;
         }
         
+	if (sum < S) {
+	   return false;
+	}
         sum += S;
         if (sum % 2 != 0) {
             return 0;

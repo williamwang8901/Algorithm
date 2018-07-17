@@ -1,0 +1,89 @@
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        Arrays.sort(nums);
+        
+        for (int num : nums) {
+            System.out.println(num + ", ");
+        }
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        
+        int result = 0;
+        for (int num : nums) {
+            if (map.containsKey(num)) {
+                continue;  //skip duplicate
+            }
+            
+            int left = map.containsKey(num - 1) ? map.get(num - 1) : 0;
+            int right = map.containsKey(num + 1) ? map.get(num + 1) : 0;
+            
+            int sum = left + right + 1;
+            result = Math.max(result, sum);
+            /*
+            After I coded and tested it, I found map.put(n, sum) is so important. Without it, the program may go wrong to handle duplicated num when there is only one neighbor number around it, or the consecutive area including it has changed longer on only one side, or both scenarios happen together.*/
+            
+            //map.put(num, sum);
+            
+            map.put(num - left, sum);
+            map.put(num + right, sum);
+        }
+        return result;
+    }
+}
+
+
+// public class Solution {
+//     public int longestConsecutive(int[] nums) {
+//         return unionFind(nums);
+//     }
+    //using hashset
+    // public int longestConsecutive(int[] nums) {
+        
+    // }
+    
+//     public int unionFind(int[] nums) {
+//         if (nums == null || nums.length == 0) {
+//             return 0;
+//         }
+//         HashMap<Integer, Integer> map = new HashMap<>();
+//         for (int num : nums) {
+//             map.put(num, num);
+//         }
+        
+//         for (int num : nums) {
+//             int num_root = find(map, num);
+//             if (map.containsKey(num - 1)) {
+//                 int left_root = find(map, num - 1);
+//                 if (left_root != num_root) {
+//                     map.put(left_root, num_root);
+//                 }
+//             }
+//             if (map.containsKey(num + 1)) {
+//                 int right_root = find(map, num + 1);
+//                 if (right_root != num_root) {
+//                     map.put(right_root, num_root);
+//                 }
+//             }
+//         }
+//         int longest = 0;
+//         HashMap<Integer, Set<Integer>> count= new HashMap<Integer, Set<Integer>>();
+//         for (int i : map.keySet()) {
+//             int i_root = find(map, i);
+//             if(!count.containsKey(i_root)) {
+//                 count.put(i_root,  new HashSet<Integer>() );
+//             }
+//             count.get(i_root).add(i);
+//             longest = Math.max(longest, count.get(i_root).size());
+//         }
+//         System.out.println(count);
+//         return longest;
+//     }
+//     public int find(HashMap<Integer, Integer> map, int x) {
+//         while (x != map.get(x)) {
+//             x = map.get(x);
+//         }
+//         return x;
+//     }
+// }

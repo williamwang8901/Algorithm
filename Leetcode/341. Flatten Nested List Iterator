@@ -1,0 +1,58 @@
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * public interface NestedInteger {
+ *
+ *     // @return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     public boolean isInteger();
+ *
+ *     // @return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // Return null if this NestedInteger holds a nested list
+ *     public Integer getInteger();
+ *
+ *     // @return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // Return null if this NestedInteger holds a single integer
+ *     public List<NestedInteger> getList();
+ * }
+ */
+
+//The benefit to store iterator is that we might need to add remove function which can only be done by iterator
+public class NestedIterator implements Iterator<Integer> {
+
+    LinkedList<Iterator<NestedInteger>> stack;
+    Integer nextInt;
+        
+    public NestedIterator(List<NestedInteger> nestedList) {
+        stack = new LinkedList<Iterator<NestedInteger>>();     
+        stack.push(nestedList.iterator());
+        nextInt = null;
+    }
+
+    @Override
+    public Integer next() {
+        hasNext();
+        Integer temp = nextInt;
+        nextInt = null;
+        return temp;
+    }
+
+    @Override
+    public boolean hasNext() {
+        while (!stack.isEmpty() && nextInt == null) {
+            Iterator<NestedInteger> peek = stack.peek();
+            if (peek.hasNext()) {
+                NestedInteger ni = peek.next();
+                if (ni.isInteger()) nextInt = ni.getInteger();
+                else stack.push(ni.getList().iterator());
+            } else {
+                stack.pop();
+            }
+        }
+        return nextInt != null;
+    }
+}
+/**
+ * Your NestedIterator object will be instantiated and called as such:
+ * NestedIterator i = new NestedIterator(nestedList);
+ * while (i.hasNext()) v[f()] = i.next();
+ */

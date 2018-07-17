@@ -1,0 +1,103 @@
+class Solution {
+    public void wallsAndGates(int[][] rooms) {
+             wallsAndGates2(rooms);
+    }
+    
+    
+    // 从inf 找gate 时间会超时
+    public void wallsAndGates1(int[][] rooms) {
+        if (rooms == null || rooms.length == 0) {
+            return;
+        }
+        
+        for (int i = 0; i < rooms.length; i++) {
+            for (int j = 0; j < rooms[0].length; j++) {
+                boolean[][] visited = new boolean[rooms.length][rooms[0].length];
+                if (rooms[i][j] == 2147483647) {
+                    bfs(rooms, visited, i, j);
+                }
+            }
+        }
+    }
+    
+    public void bfs(int[][] rooms, boolean[][] visited, int i, int j) {
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+        int[][] dir = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int m = rooms.length;
+        int n = rooms[0].length;
+        queue.offer(i * n + j);
+        int distance = 0;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            distance++;
+            for (int k = 0; k < size; k++) {
+                int cur = queue.poll();
+                int x = cur / n;
+                int y = cur % n;
+                for (int d = 0; d < 4; d++) {
+                    int next_x = x + dir[d][0];
+                    int next_y = y + dir[d][1];
+                    if (next_x >= 0 && next_x < m && next_y >= 0 && next_y < n && !visited[next_x][next_y] && rooms[next_x]           [next_y] != -1) {
+                        if (rooms[next_x][next_y] == 0) {
+                            rooms[i][j] = distance;
+                            return;
+                        }
+                        visited[next_x][next_y] = true;
+                        queue.offer(next_x * n + next_y);
+                    }
+                }
+            }
+        }
+    }
+    //从gate 开始搜
+    public void wallsAndGates2(int[][] rooms) {
+        if (rooms == null || rooms.length == 0) {
+            return;
+        }
+        
+        for (int i = 0; i < rooms.length; i++) {
+            for (int j = 0; j < rooms[0].length; j++) {
+                if (rooms[i][j] == 0) {
+                    bfs2(rooms, i, j);
+                }
+            }
+        }
+    }
+
+    //expanding from gate to its surroundings
+    public void bfs2(int[][] rooms, int i, int j) {
+        HashSet<Integer> visited = new HashSet<Integer>();
+        int m = rooms.length;
+        int n = rooms[0].length;
+        int[][] dir = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+        queue.offer(i * n + j);
+        int step = 0;
+        int distance = 0;
+        while (!queue.isEmpty()) {
+            distance++;
+            int size = queue.size();
+            for (int s = 0; s < size; s++) {
+                int cur = queue.poll();
+                int x = cur / n;
+                int y = cur % n;
+
+                for (int k = 0; k < 4; k++) {
+                    int next_x = x + dir[k][0];
+                    int next_y = y + dir[k][1];
+                    int id = next_x * n + next_y;
+                    if (next_x >= 0 && next_x < m && next_y >= 0 && next_y < n &&
+                        rooms[next_x][next_y] != 0 && rooms[next_x][next_y] != -1 && 
+                        !visited.contains(id) && rooms[next_x][next_y] != 0) {
+                        rooms[next_x][next_y] = Math.min(rooms[next_x][next_y], distance);
+                        queue.offer(id);
+                        visited.add(id);
+                    }
+                }
+            }
+        }
+    }
+    
+} 
+
+

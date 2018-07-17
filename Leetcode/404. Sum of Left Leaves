@@ -1,0 +1,71 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    
+    public int sumOfLeftLeaves(TreeNode root) {
+        return recursive(root);
+    }
+    
+    
+    int global = 0;
+    public int usingGlobalVariable(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        
+        dfs(root, false);
+        return global;
+    }
+    
+    public void dfs(TreeNode root, boolean isLeft) {
+        if (root == null) {
+            return;
+        }
+        
+        if (root.left == null && root.right == null) {  // is leave node
+            if(isLeft) {
+                global += root.val;
+            }
+        }
+        dfs(root.left, true);
+        dfs(root.right, false);
+    }
+    
+    
+    
+    public int recursive(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        
+        int sum = 0;
+        if (root.left != null) {
+            if (root.left.left == null && root.left.right == null) {
+                sum += root.left.val;
+            }
+        }
+        
+        int left = recursive(root.left);
+        int right = recursive(root.right);
+        
+        return sum + left + right;
+    }
+    
+    
+    public int iterate(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        
+        
+    }
+    
+    
+}

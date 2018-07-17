@@ -1,20 +1,110 @@
 class Solution {
     public boolean increasingTriplet(int[] nums) {
+        // return dp(nums);
+        // return method2(nums);
+        
+        return method3(nums);
+    }
+    
+    
+    //method1 dp
+    /*这道题让我们求一个无序数组中是否有任意三个数字是递增关系的，我最先相处的方法是用一个dp数组，dp[i]表示在i位置之前小于等于nums[i]的数字的个数(包括其本身)，我们初始化dp数组都为1，然后我们开始遍历原数组，对当前数字nums[i]，我们遍历其之前的所有数字，如果之前某个数字nums[j]小于nums[i]，那么我们更新dp[i] = max(dp[i], dp[j] + 1)，如果此时dp[i]到3了，则返回true，若遍历完成，则返回false*/
+    public boolean dp(int[] nums) {
+        int[] dp = new int[nums.length];
+    
+        for (int i = 0; i < nums.length; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+                
+                if (dp[i] == 3) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    //using two variables
+    public boolean method2(int[] nums) {
         if (nums == null || nums.length == 0) {
             return false;
         }
         
-        int min = ~(1 << 31);
-        int secondMin = ~(1<<31);
-        
+        int firstMin = ~(1 << 31);
+        int secondMin = ~(1 << 31);
+        /*
+        我觉得这里博主没有把第二种方法说的很清楚。 这里 
+        if (firstMin >= num) firstMin = num；
+        else if (secondMin >= num)  secondMin = num;
+        这种写法，是要保证 firstMin, secondMin是递增的， firstMin 总是记录全局最小的 但是secondMin 不是记录全局第二最小  eg：【3,5,1,6】。 也就是说， 如果 firstMin, secondMin都不为INT_MAX, 则前面的部分一定存在两个数字是递增的。 此时如果存在第三个数大于这两个数，则 increasing triplet 存在。 同理可以推广到 increasing quartet， quintet， etc....
+
+        类比起来， 
+        if (firstMin >= num) {
+            secondMin = firstMin;
+            firstMin = num; 
+        }
+        是仅仅记录最小和第二最小。 
+
+        可以用 [5,1,6] 和 [8,3,5,1,6] 这两个例子感受一下。*/
         for (int num : nums) {
-            if (num <= min) { //必须要有等号 eg：1，1，1，1
-                min = num;
-            } else if (num <= secondMin) {  //必须要有等号 eg：[1,2,2,1]
+            if (firstMin >= num) {
+                firstMin = num;
+            } else if (secondMin >= num) {
                 secondMin = num;
             } else {
-                return true; // execute here if and only if we have min, secMin, and third large
+                return true;
             }
+        }
+        return false;
+    }
+    
+    //method3
+    /*
+    如果觉得上面的解法不容易想出来，那么如果能想出下面这种解法，估计面试官也会为你点赞。这种方法的虽然不满足常数空间的要求，但是作为对暴力搜索的优化，也是     一种非常好的解题思路。这个解法的思路是建立两个数组，forward数组和backward数组，其中forward[i]表示[0, i)之间最小的数，backward[i]表示(i, n-1]     之间最大的数，那么对于任意一个位置i，如果满足 forward[i] < nums[i] < backward[i]，则表示这个递增三元子序列存在，举个例子来看吧，比如：
+
+    nums:        8  3  5  1  6
+
+    foward:      8  3  3  1  1
+
+    backward:    8  6  6  6  6
+
+    我们发现数字5满足forward[i] < nums[i] < backward[i]，所以三元子序列存在。*/
+    
+    public boolean method3(int[] nums) {
+        int[] forward = new int[nums.length];
+        int[] backward = new int[nums.length];
+        
+        for (int i = 0; i < nums.length; i++) {
+            if (i == 0) {
+                forward[i] = nums[i];
+                continue;
+            }
+            forward[i] = Math.min(forward[i - 1], nums[i]);
+            
+        }
+        
+        for (int i = nums.length - 1; i >= 0; i--) {
+            if (i == nums.length - 1) {
+                backward[i] = nums[i];
+                continue;
+            }
+            backward[i] = Math.max(nums[i], backward[i + 1]);
+        }
+        
+        
+        for (int i = 0; i < nums.length; i++) {
+            if (forward[i] < nums[i] && nums[i] < backward[i]) {
+                return true;
+            }
+            
+            System.out.println();
+                        System.out.println(forward[i]);
+                        
+                        System.out.println(backward[i]);
+
         }
         return false;
     }

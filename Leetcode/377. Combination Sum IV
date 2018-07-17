@@ -1,0 +1,62 @@
+class Solution {
+    public int combinationSum4(int[] nums, int target) {
+        
+    }   
+    public int dfs(int[] nums, int target) {
+        if (target == 0) {
+            return 1;
+        }
+        
+        int result = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > target) {
+                continue;
+            }
+            result += dfs(nums, target - nums[i]);
+        }
+        return result;
+    }
+      
+    public int recursiveMemorize(int[] nums, int S) {
+        int[] dp = new int[S + 1];
+        Arrays.fill(dp, -1);
+        return memorize(nums,  S, dp);
+    }
+    public int memorize(int[] nums, int S, int[] dp) {
+        if (S < 0) {
+                return 0;
+            }
+        
+        if (S == 0) {
+            return 1;
+        }
+        
+        if (dp[S] != -1) {
+            return dp[S];
+        }
+
+        int d = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            d += recursive(nums, S - nums[i]);        
+        }
+        dp[S] = d;
+        return d;
+    }
+    
+    /*
+    The bottom up function can be accelerated by using Arrays.sort() .
+Time complexity of the former one is O(nums.length*target).
+If n is large enough, the second loop could be reduced for many times once sorted.
+*/     public int dpIterate(int[] nums, int S) {
+        int[][]dp = new int[S + 1][nums.length + 1];
+        dp[0][0] = 1;
+        for (int i = 1; i <= S; i++) {
+            dp[i][0] = 1;
+            for (int j = 1; j <= nums.length; j++) {
+                dp[i][j] = dp[i][j] + (i >= nums[j - 1] ? dp[i - nums[j - 1]][j] : 0);   
+            }   
+        }
+        return dp[S][nums.length];
+    }
+}

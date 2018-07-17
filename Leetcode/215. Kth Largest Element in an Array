@@ -1,0 +1,86 @@
+class Solution {
+
+//avg. O(n) time
+/*Thanks for sharing,The worse case O(N^2), because if the pivot you picked always ended up being the first in the array you will end up doing N + (N-1) + (N-2) + (N-3) .... operations ?
+在快速排序的早期版本中呢，最左面或者是最右面的那个元素被选为枢轴，那最坏的情况就会在下面的情况下发生啦：
+
+1）数组已经是正序（same order）排过序的。 
+2）数组已经是倒序排过序的。 
+3）所有的元素都相同（1、2的特殊情况）
+*/
+    public int findKthLargest2(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return - 1;
+        }
+        int index = quickSelect(nums, 0, nums.length - 1, k);
+        return nums[index];
+        
+    }
+    
+    public int quickSelect(int[] nums, int left, int right, int k) {
+        int cur = partition(nums, left, right);
+        
+        if (cur - left == k) {
+            return cur - 1;
+        }
+        
+        if (cur - left < k) {
+            return quickSelect(nums, cur, right, k - (cur - left));
+        }
+        return quickSelect(nums, left, cur - 2, k);
+    }
+        
+    public int partition(int[] nums, int left, int right) {
+        int pivot = nums[right];
+        
+        int i = left;
+        for (int j = left; j <= right; j++) {
+            if (nums[j] >= pivot) {
+                swap(nums, i++, j);
+            }
+        }
+        return i;
+    }
+    
+    public void swap(int[] nums, int i, int j) {
+        int tmp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = tmp;
+    }
+    
+    //using priorityqueue
+    public int findKthLargest(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        
+        PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
+            
+        for (int num : nums) {
+            pq.offer(num);  //这个不能写到 if check 后面， 因为如果是最后一个元素放进去 我们还是要检查是不是需要poll
+            if (pq.size() > k) {
+                pq.poll();
+            }
+        }
+            
+        return pq.peek();
+    }
+}
+
+
+    
+    
+    //  public int quickSelect(int[] nums, int left, int right, int k) {
+    //     if (k > 0 && k <= (right - left + 1)) {
+    //         int p = partition(nums, left, right);
+    //         if (p - left == k - 1) {
+    //             return p;
+    //         }
+    //         if (p - left < k - 1) {
+    //             return quickSelect(nums, p + 1, right, k - (p - left + 1));
+    //         }
+    //         return quickSelect(nums, left, p - 1, k);
+    //     } else {
+    //         return -1;
+    //     }
+    // }

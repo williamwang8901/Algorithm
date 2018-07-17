@@ -1,0 +1,52 @@
+class Solution {
+    public boolean validPalindrome(String s) {
+        return gready(s);
+        // return bruteForce(new StringBuilder(s));
+    }
+      
+    
+    public boolean bruteForce(StringBuilder s) {
+        for (int i = 0; i < s.length(); i++) {
+            char b = s.charAt(i);
+            
+            s.deleteCharAt(i);
+            if (isValid(s.toString())) {
+                return true;
+            }
+            s.insert(i, b);
+        }
+        return false;
+    }
+    
+    public boolean isValid(String s) {
+        int left = 0;
+        int right = s.length() -1;
+        while (left < right) {
+            if (s.charAt(left) == s.charAt(right)) {
+                left++;
+                right--;
+            } else {
+                return false;
+            }
+        }
+        return true;
+     }
+    
+    public boolean gready(String s) {
+        int left = 0;
+        int right = s.length() -1;
+        while (left < right) {
+            if (s.charAt(left) == s.charAt(right)) {
+                left++;
+                right--;
+            } else {
+                if (isValid(s.substring(left + 1, right + 1)) || isValid(s.substring(left,right))) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
